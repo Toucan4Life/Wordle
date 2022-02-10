@@ -56,7 +56,8 @@ namespace Wordle
             {
                 if (chara == '?')
                 {
-                    _searcher.AddAtLeastCharacterCount(word[i], _searcher.CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
+                    _searcher.AddAtLeastCharacterCount(word[i], word.Where((charInWord, j) => charInWord == word[i] && pattern[j] != '.').Count());
+
                     stringNotToMatch = stringNotToMatch.Append( word[i]);
                 }
                 else
