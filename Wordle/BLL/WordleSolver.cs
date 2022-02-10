@@ -10,31 +10,27 @@ namespace Wordle
     public class WordleSolver
     {
         List<Regex> regexesNotToMatch = new();
-        Regex? regexesToMatch ;
-        IEnumerable<char> characterNotPresent = new List<char>();
-
-        public IEnumerable<char> CharacterPresent
-        {
-            get => _characterPresent.Concat( regexesToMatch.ToString()[1..^1].Replace(".", string.Empty));
-            private set => _characterPresent = value;
-        }
-
-        List<Tuple<char, int>> characterCount = new List<Tuple<char, int>>();
+        Regex? regexesToMatch;
+        List<Tuple<char, int>> characterCount = new();
+        List<Tuple<char, int>> characterAtLeastCount = new();
         private readonly Dictionary<string, float> _wordDictionary;
-        private IEnumerable<char> _characterPresent = new List<char>();
 
         public WordleSolver(Dictionary<string, float> wordDictionary)
         {
             _wordDictionary = wordDictionary;
         }
 
+        public IEnumerable<char> CharacterInRegexToMatch()
+        {
+            return regexesToMatch.ToString().Replace(".", string.Empty).Replace("$", string.Empty).Replace("^", string.Empty);
+        }
+
         public void Reset()
         {
             regexesNotToMatch = new List<Regex>();
             regexesToMatch = null;
-            characterNotPresent = new List<char>();
-            CharacterPresent = new List<char>();
             characterCount = new List<Tuple<char, int>>();
+            characterAtLeastCount = new List<Tuple<char, int>>();
         }
 
         public Dictionary<string, float> Filter(string word, string pattern)
@@ -43,7 +39,7 @@ namespace Wordle
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
 
-            return _wordDictionary.Where(word => Predicate(word.Key, regexesToMatch, regexesNotToMatch, characterNotPresent, CharacterPresent))
+            return _wordDictionary.Where(word => Predicate(word.Key, regexesToMatch, regexesNotToMatch))
                 .OrderByDescending(t => t.Value).Take(20).ToDictionary(t => t.Key, t => t.Value);
         }
 
@@ -71,7 +67,7 @@ namespace Wordle
             var stringNotToMatch = new StringBuilder();
 
             int i = 0;
-            if (pattern.Count(t => t == '?') == 0)
+            if (pattern.All(t => t != '?'))
             {
                 return;
             }
@@ -79,7 +75,8 @@ namespace Wordle
             {
                 if (chara == '?')
                 {
-                    CharacterPresent=CharacterPresent.Append(word[i]);
+                    characterAtLeastCount.Add(
+                        new Tuple<char, int>(word[i], CharacterInRegexToMatch().Count(t => t == word[i]) + 1));
                     stringNotToMatch = stringNotToMatch.Append( word[i]);
                 }
                 else
@@ -102,29 +99,42 @@ namespace Wordle
             {
                 if (chara == '.')
                 {
-                    if ( !CharacterPresent.Contains(chara))
+                    //Green + not yellow => on a le compte juste
+                    if (CharacterInRegexToMatch().Any(t=>t== word[i]) && characterAtLeastCount.Select(t => t.Item1).All(p => p != word[i]))
                     {
-                        characterNotPresent = characterNotPresent.Append(chara);
+                        characterCount.Add(new Tuple<char, int>(word[i], CharacterInRegexToMatch().Count(t => t == word[i])));
                     }
+                    //Green + yellow => on un compte pas juste
+                    else if (CharacterInRegexToMatch().Any(t => t == word[i]) && characterAtLeastCount.Select(t => t.Item1).Any(p => p == word[i]))
+                    {
+                        characterAtLeastCount.Add(new Tuple<char, int>(word[i], CharacterInRegexToMatch().Count(t => t == word[i])));
+                    }
+                    //yellow + RED => on un compte juste
+                    else if (characterAtLeastCount.Select(t => t.Item1).Any(p => p == word[i]))
+                    {
+                        characterCount.Add(new Tuple<char, int>(word[i], characterAtLeastCount.Single(t => t.Item1 == word[i]).Item2));
+                    }
+                    //RED=>LettersNotPresent => count = 0
                     else
                     {
-                       characterCount.Add(new Tuple<char, int>(chara, CharacterPresent.Count(t => t == chara)));
+                        characterCount.Add(new Tuple<char, int>(word[i], 0));
                     }
                 }
+
+                i++;
             }
 
         }
 
         bool Predicate(string word, Regex? regex,
-            IEnumerable<Regex> regexNotToMatch, IEnumerable<char> notInWordChar , IEnumerable<char> inwordchar)
+            IEnumerable<Regex> regexNotToMatch)
         {
             var isRegexMatch = regex?.IsMatch(word) ?? true;
             var isRegexNotMatch = regexNotToMatch.All(reg => !reg.IsMatch(word));
-            var isAllCharPresent = inwordchar.All(word.Contains);
-            var isComposedOfAllowedCharacterOnly = !notInWordChar.Any(word.Contains);
             var IsCountCorrect = characterCount.All(t => word.Count(v => v == t.Item1) == t.Item2);
-            return (regex?.IsMatch(word) ?? true) && regexNotToMatch.All(reg => !reg.IsMatch(word)) &&
-                   !notInWordChar.Any(word.Contains) && inwordchar.All(word.Contains)&& characterCount.All(t=> word.Count(v=>v==t.Item1)==t.Item2);
+            var IsAtLeastCountCorrect = characterAtLeastCount.All(t => word.Count(v => v == t.Item1) >= t.Item2);
+            return (regex?.IsMatch(word) ?? true) && regexNotToMatch.All(reg => !reg.IsMatch(word))
+                  && characterCount.All(t=> word.Count(v=>v==t.Item1)==t.Item2) && characterAtLeastCount.All(t => word.Count(v => v == t.Item1) >= t.Item2);
         }
     }
 }

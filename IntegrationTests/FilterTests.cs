@@ -9,12 +9,12 @@ namespace IntegrationTests
     [TestClass]
     public class FilterTests
     {
-        [TestMethod]
-        public void SolverReturnWordWhenWholeWordIsPassed2()
-        {
-            WordleSolver _solver = new(new Dictionary<string, float> { { "coucou", 0 } });
-            Assert.IsFalse(_solver.Filter("", "......").ContainsKey("coucou"));
-        }
+        //[TestMethod]
+        //public void SolverReturnWordWhenWholeWordIsPassed2()
+        //{
+        //    WordleSolver _solver = new(new Dictionary<string, float> { { "coucou", 0 } });
+        //    Assert.IsFalse(_solver.Filter("", "......").ContainsKey("coucou"));
+        //}
 
         [TestMethod]
         public void SolverReturnWordWhenWholeWordIsPassed()
@@ -108,15 +108,30 @@ namespace IntegrationTests
         [TestMethod]
         public void YellowGreen()
         {
-            WordleSolver _solver = new(new Dictionary<string, float> { { "tivrv", 0 }, { "livre", 0 }, { "givre", 0 } });
-            Assert.IsTrue(_solver.Filter("vivre", "?!!!!").ContainsKey("tivrv"));
+            WordleSolver _solver = new(new Dictionary<string, float> { { "tivrv", 0 } });
+            var response = _solver.Filter("vivre", "?!!!.");
+            Assert.IsTrue(response.ContainsKey("tivrv"));
         }
 
         [TestMethod]
         public void RedYellowGreen()
         {
-            WordleSolver _solver = new(new Dictionary<string, float> { { "eayieu", 0 }, { "livre", 0 }, { "givre", 0 } });
-            Assert.IsTrue(_solver.Filter("eetete", "!?!!.").ContainsKey("eayieu"));
+            WordleSolver _solver = new(new Dictionary<string, float> { { "eaye", 0 } });
+            Assert.IsTrue(_solver.Filter("eeet", "!?..").ContainsKey("eaye"));
+        }
+
+        [TestMethod]
+        public void RedYellowGreen1()
+        {
+            WordleSolver _solver = new(new Dictionary<string, float> { { "poursuivis", 0 } });
+            Assert.IsFalse(_solver.Filter("maintenant", "..???.....").ContainsKey("poursuivis"));
+        }
+
+        [TestMethod]
+        public void RedYellowGreen2()
+        {
+            WordleSolver _solver = new(new Dictionary<string, float> { { "proportion", 0 } });
+            Assert.IsTrue(_solver.Filter("maintenant", "..???.....").ContainsKey("proportion"));
         }
 
         //[TestMethod]
