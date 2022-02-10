@@ -13,7 +13,7 @@ namespace Wordle.BLL
         public List<Regex> regexesToMatch = new();
         public Dictionary<char, int> characterCount = new();
         public Dictionary<char, int> characterAtLeastCount = new();
-        private Dictionary<string, float> wordDictionary;
+        public Dictionary<string, float> wordDictionary;
 
         public WordSearcher(Dictionary<string, float> wordDictionary)
         {
@@ -49,7 +49,7 @@ namespace Wordle.BLL
             }
         }
 
-        public Dictionary<char, int> AddAtLeastCharacterCount(char character, int count)
+        public void AddAtLeastCharacterCount(char character, int count)
         {
             if (characterAtLeastCount.ContainsKey(character))
             {
@@ -59,8 +59,18 @@ namespace Wordle.BLL
             {
                 characterAtLeastCount[character] = count;
             }
+        }
 
-            return characterAtLeastCount;
+        public IEnumerable<KeyValuePair<string, float>> Search()
+        {
+            return wordDictionary.Where(word=>isWordConformToRule(word.Key));
+        }
+
+        public bool isWordConformToRule(string word)
+        {
+            return regexesToMatch.All(reg => reg.IsMatch(word)) && regexesNotToMatch.All(reg => !reg.IsMatch(word)) &&
+                   characterCount.All(t => word.Count(v => v == t.Key) == t.Value) &&
+                   characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
         }
     }
 

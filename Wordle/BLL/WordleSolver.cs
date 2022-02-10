@@ -10,12 +10,10 @@ namespace Wordle
 {
     public class WordleSolver
     {
-        private readonly Dictionary<string, float> _wordDictionary;
         private WordSearcher _searcher;
 
         public WordleSolver(Dictionary<string, float> wordDictionary)
         {
-            _wordDictionary = wordDictionary;
             _searcher = new WordSearcher(wordDictionary);
         }
 
@@ -35,8 +33,7 @@ namespace Wordle
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
 
-            return _wordDictionary.Where(word => Predicate(word.Key, _searcher.regexesToMatch,_searcher.characterCount, _searcher.characterAtLeastCount, _searcher.regexesNotToMatch))
-                .OrderByDescending(t => t.Value).Take(20).ToDictionary(t => t.Key, t => t.Value);
+            return _searcher.Search().Take(20).ToDictionary(t => t.Key, t => t.Value);
         }
 
         public void CheckCorrectCharRule(string word, string pattern)
@@ -64,8 +61,7 @@ namespace Wordle
             {
                 if (chara == '?')
                 {
-                    
-                       _searcher.AddAtLeastCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
+                    _searcher.AddAtLeastCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
                     stringNotToMatch = stringNotToMatch.Append( word[i]);
                 }
                 else
@@ -114,17 +110,6 @@ namespace Wordle
                 i++;
             }
 
-        }
-
-        bool Predicate(string word, List<Regex> regex, Dictionary<char, int> characterCount, Dictionary<char, int> characterAtLeastCount,
-            IEnumerable<Regex> regexNotToMatch)
-        {
-            var isRegexMatch = regex.All(reg => reg.IsMatch(word));
-            var isRegexNotMatch = regexNotToMatch.All(reg => !reg.IsMatch(word));
-            var IsCountCorrect = characterCount.All(t => word.Count(v => v == t.Key) == t.Value);
-            var IsAtLeastCountCorrect = characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
-            return regex.All(reg => reg.IsMatch(word)) && regexNotToMatch.All(reg => !reg.IsMatch(word))
-                                                       && characterCount.All(t=> word.Count(v=>v==t.Key) ==t.Value) && characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
         }
     }
 }
