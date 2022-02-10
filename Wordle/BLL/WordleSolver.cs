@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Wordle.BLL;
 
 namespace Wordle
 {
     public class WordleSolver
     {
         List<Regex> regexesNotToMatch = new();
-        Regex? regexesToMatch;
         Dictionary<char, int> characterCount = new();
         Dictionary<char, int> characterAtLeastCount = new();
         private readonly Dictionary<string, float> _wordDictionary;
+        private WordSearcher _searcher = new();
 
         public WordleSolver(Dictionary<string, float> wordDictionary)
         {
@@ -22,15 +23,12 @@ namespace Wordle
 
         public IEnumerable<char> CharacterInRegexToMatch()
         {
-            return regexesToMatch.ToString().Replace(".", string.Empty).Replace("$", string.Empty).Replace("^", string.Empty);
+            return _searcher.regexesToMatch.SelectMany(reg=>reg.ToString().Replace(".", string.Empty).Replace("$", string.Empty).Replace("^", string.Empty));
         }
 
         public void Reset()
         {
-            regexesNotToMatch = new List<Regex>();
-            regexesToMatch = null;
-            characterCount = new Dictionary<char, int>();
-            characterAtLeastCount = new Dictionary<char, int>();
+            _searcher.Reset();
         }
 
         public Dictionary<string, float> Filter(string word, string pattern)
@@ -39,27 +37,20 @@ namespace Wordle
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
 
-            return _wordDictionary.Where(word => Predicate(word.Key, regexesToMatch, regexesNotToMatch))
+            return _wordDictionary.Where(word => Predicate(word.Key, _searcher.regexesToMatch, regexesNotToMatch))
                 .OrderByDescending(t => t.Value).Take(20).ToDictionary(t => t.Key, t => t.Value);
         }
 
         public void CheckCorrectCharRule(string word, string pattern)
         {
             var stringToMatch = new StringBuilder();
-            string regexAlreadyKnow;
-            if (regexesToMatch != null)
-                regexAlreadyKnow = regexesToMatch.ToString()[1..^1];
-            else
-                regexAlreadyKnow = "".PadRight(word.Length, '.');
-
-            var i = 0;
-            foreach (var chara in regexAlreadyKnow)
+            
+            for (var i = 0 ; i < pattern.Length ; i++)
             {
-                stringToMatch=stringToMatch.Append(chara == '!' ? regexAlreadyKnow[i] : (pattern[i] == '!' ? word[i] : '.'));
-                i++;
+                stringToMatch=stringToMatch.Append(pattern[i] == '!' ? word[i] : '.');
             }
 
-            regexesToMatch = new Regex('^' + stringToMatch.ToString() + '$');
+            _searcher.AddRegexToMatch(new Regex('^' + stringToMatch.ToString() + '$'));
         }
 
         public void CheckMisPlacedCharRule(string word, string pattern)
@@ -130,15 +121,15 @@ namespace Wordle
 
         }
 
-        bool Predicate(string word, Regex? regex,
+        bool Predicate(string word, List<Regex> regex,
             IEnumerable<Regex> regexNotToMatch)
         {
-            var isRegexMatch = regex?.IsMatch(word) ?? true;
+            var isRegexMatch = regex.All(reg => reg.IsMatch(word));
             var isRegexNotMatch = regexNotToMatch.All(reg => !reg.IsMatch(word));
             var IsCountCorrect = characterCount.All(t => word.Count(v => v == t.Key) == t.Value);
             var IsAtLeastCountCorrect = characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
-            return (regex?.IsMatch(word) ?? true) && regexNotToMatch.All(reg => !reg.IsMatch(word))
-                  && characterCount.All(t=> word.Count(v=>v==t.Key) ==t.Value) && characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
+            return regex.All(reg => reg.IsMatch(word)) && regexNotToMatch.All(reg => !reg.IsMatch(word))
+                                                       && characterCount.All(t=> word.Count(v=>v==t.Key) ==t.Value) && characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
         }
     }
 }
