@@ -13,6 +13,12 @@ namespace Wordle.BLL
         public List<Regex> regexesToMatch = new();
         public Dictionary<char, int> characterCount = new();
         public Dictionary<char, int> characterAtLeastCount = new();
+        private Dictionary<string, float> wordDictionary;
+
+        public WordSearcher(Dictionary<string, float> wordDictionary)
+        {
+            this.wordDictionary = wordDictionary;
+        }
 
         public void Reset()
         {
@@ -32,7 +38,7 @@ namespace Wordle.BLL
             regexesNotToMatch.Add(regex);
         }
 
-        public Dictionary<char, int> AddCharacterCount(char character, int count)
+        public void AddCharacterCount(char character, int count)
         {
             if (characterCount.ContainsKey(character))
             {
@@ -41,9 +47,20 @@ namespace Wordle.BLL
             {
                 characterCount[character] = count;
             }
+        }
 
+        public Dictionary<char, int> AddAtLeastCharacterCount(char character, int count)
+        {
+            if (characterAtLeastCount.ContainsKey(character))
+            {
+                characterAtLeastCount[character] = Math.Max(characterAtLeastCount[character], count);
+            }
+            else
+            {
+                characterAtLeastCount[character] = count;
+            }
 
-            return characterCount;
+            return characterAtLeastCount;
         }
     }
 

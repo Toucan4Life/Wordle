@@ -10,13 +10,13 @@ namespace Wordle
 {
     public class WordleSolver
     {
-        Dictionary<char, int> characterAtLeastCount = new();
         private readonly Dictionary<string, float> _wordDictionary;
-        private WordSearcher _searcher = new();
+        private WordSearcher _searcher;
 
         public WordleSolver(Dictionary<string, float> wordDictionary)
         {
             _wordDictionary = wordDictionary;
+            _searcher = new WordSearcher(wordDictionary);
         }
 
         public IEnumerable<char> CharacterInRegexToMatch()
@@ -35,7 +35,7 @@ namespace Wordle
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
 
-            return _wordDictionary.Where(word => Predicate(word.Key, _searcher.regexesToMatch,_searcher.characterCount, _searcher.regexesNotToMatch))
+            return _wordDictionary.Where(word => Predicate(word.Key, _searcher.regexesToMatch,_searcher.characterCount, _searcher.characterAtLeastCount, _searcher.regexesNotToMatch))
                 .OrderByDescending(t => t.Value).Take(20).ToDictionary(t => t.Key, t => t.Value);
         }
 
@@ -64,7 +64,8 @@ namespace Wordle
             {
                 if (chara == '?')
                 {
-                    if(! characterAtLeastCount.ContainsKey(word[i])) characterAtLeastCount.Add(word[i], CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
+                    
+                       _searcher.AddAtLeastCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
                     stringNotToMatch = stringNotToMatch.Append( word[i]);
                 }
                 else
@@ -88,23 +89,20 @@ namespace Wordle
                 if (chara == '.')
                 {
                     //Green + not yellow => on a le compte juste
-                    if (CharacterInRegexToMatch().Any(t=>t== word[i]) && characterAtLeastCount.Select(t => t.Key).All(p => p != word[i]))
+                    if (CharacterInRegexToMatch().Any(t=>t== word[i]) && _searcher.characterAtLeastCount.Select(t => t.Key).All(p => p != word[i]))
                     {
                         _searcher.AddCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]));
                     }
                     //Green + yellow => on un compte pas juste
-                    else if (CharacterInRegexToMatch().Any(t => t == word[i]) && characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
+                    else if (CharacterInRegexToMatch().Any(t => t == word[i]) && _searcher.characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
                     {
-                        if (characterAtLeastCount.ContainsKey(word[i]))
-                            characterAtLeastCount[word[i]] = (Math.Max(characterAtLeastCount[word[i]],
-                                CharacterInRegexToMatch().Count(t => t == word[i])));
-                        else
-                            characterAtLeastCount.Add(word[i], CharacterInRegexToMatch().Count(t => t == word[i]));
+                       _searcher.AddAtLeastCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]));
                     }
                     //yellow + RED => on un compte juste
-                    else if (characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
+                    //todo:wtf
+                    else if (_searcher.characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
                     {
-                        _searcher.AddCharacterCount(word[i], characterAtLeastCount.Single(t => t.Key == word[i]).Value);
+                        _searcher.AddCharacterCount(word[i], _searcher.characterAtLeastCount.Single(t => t.Key == word[i]).Value);
                     }
                     //RED=>LettersNotPresent => count = 0
                     else
@@ -118,7 +116,7 @@ namespace Wordle
 
         }
 
-        bool Predicate(string word, List<Regex> regex, Dictionary<char, int> characterCount,
+        bool Predicate(string word, List<Regex> regex, Dictionary<char, int> characterCount, Dictionary<char, int> characterAtLeastCount,
             IEnumerable<Regex> regexNotToMatch)
         {
             var isRegexMatch = regex.All(reg => reg.IsMatch(word));
