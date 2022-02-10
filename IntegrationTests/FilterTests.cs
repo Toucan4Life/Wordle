@@ -134,6 +134,15 @@ namespace IntegrationTests
             Assert.IsTrue(_solver.Filter("maintenant", "..???.....").ContainsKey("proportion"));
         }
 
+        [TestMethod]
+        public void RedYellowGreen3()
+        {
+            WordleSolver _solver = new(new Dictionary<string, float> { { "maintenant", 0 }, { "inquietude", 0 }, { "protection", 0 } });
+            var dictionary = _solver.Filter("maintenant", "..???.....");
+            //var dictionary2 = _solver.Filter("inquietude", "??...?!...");
+            Assert.IsTrue(dictionary.ContainsKey("protection"));
+        }
+
         //[TestMethod]
         //public void SolverReturnWordWhenWholeWordIsPassed4()
         //{
