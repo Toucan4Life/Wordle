@@ -69,5 +69,22 @@ namespace IntegrationTests
             Assert.AreEqual("coucou", response.First().Key);
             Assert.AreEqual(5.5f, response.First().Value);
         }
+
+        [TestMethod]
+        public void DoesNotAddDataWithSpace()
+        {
+            CsvReader reader = new();
+            var wordsFreq = new Dictionary<string, float>();
+            var response = reader.ParseLine("cou cou;5.5", wordsFreq);
+            Assert.IsFalse(response.Any());
+        }
+        [TestMethod]
+        public void DoesNotAddDataWithDash()
+        {
+            CsvReader reader = new();
+            var wordsFreq = new Dictionary<string, float>();
+            var response = reader.ParseLine("cou-cou;5.5", wordsFreq);
+            Assert.IsFalse(response.Any());
+        }
     }
 }

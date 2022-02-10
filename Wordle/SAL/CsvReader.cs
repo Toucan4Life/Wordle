@@ -29,7 +29,7 @@ namespace Wordle.SAL
 
         public Dictionary<string, float>  ParseLine(string? line, Dictionary<string, float> wordsFreq)
         {
-            if(string.IsNullOrWhiteSpace(line)) return wordsFreq;
+            if(string.IsNullOrWhiteSpace(line) || line.Contains(' ') || line.Contains('-')) return wordsFreq;
             var values = line.Split(';');
             if (wordsFreq.ContainsKey(values[0].Transliterate())) wordsFreq[values[0].Transliterate()] = AddTwoStrings(wordsFreq[values[0].Transliterate()], values[1]);
 
