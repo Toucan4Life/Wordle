@@ -134,13 +134,41 @@ namespace IntegrationTests
             Assert.IsTrue(_solver.Filter("maintenant", "..???.....").ContainsKey("proportion"));
         }
 
+        //[TestMethod]
+        //public void RedYellowGreen3()
+        //{
+        //    WordleSolver _solver = new(new Dictionary<string, float> { { "protection", 0 }, { "maintenant", 0 }, { "inquietude", 0 } });
+        //    var dictionary = _solver.Filter("maintenant", "..???.....");
+        //    var dictionary2 = _solver.Filter("inquietude", "??...?!...");
+        //    Assert.IsTrue(dictionary2.ContainsKey("protection"));
+        //}
+
         [TestMethod]
-        public void RedYellowGreen3()
+        public void RedYellowGreen4()
         {
-            WordleSolver _solver = new(new Dictionary<string, float> { { "maintenant", 0 }, { "inquietude", 0 }, { "protection", 0 } });
-            var dictionary = _solver.Filter("maintenant", "..???.....");
-            //var dictionary2 = _solver.Filter("inquietude", "??...?!...");
-            Assert.IsTrue(dictionary.ContainsKey("protection"));
+            WordleSolver _solver = new(new Dictionary<string, float> { { "maintenant", 0 }, { "exactement", 0 }, { "encourager", 0 } });
+            var dictionary = _solver.Filter("maintenant", ".?.?.?....");
+            var dictionary2 = _solver.Filter("exactement", "!.??.?..?.");
+            Assert.IsTrue(dictionary2.ContainsKey("encourager"));
+        }
+
+        [TestMethod]
+        public void RedYellowGreen5()
+        {
+            WordleSolver _solver = new(new Dictionary<string, float> { { "mauvaise", 0 }, { "aiguille", 0 },  { "habitude", 0 }, { "restaure", 0 } });
+            var dictionary = _solver.Filter("restaure", "....??.!");
+            var dictionary2 = _solver.Filter("habitude", ".?.?.?.!");
+            Assert.IsFalse(dictionary2.ContainsKey("mauvaise"));
+        }
+
+        [TestMethod]
+        public void RedYellowGreen6()
+        {
+            WordleSolver _solver = new(new Dictionary<string, float> { { "abdicataire", 0 }, { "litterature", 0 }, { "ventilateur", 0 }, { "realisateur", 0 }, { "utilisateur", 0 } });
+            var dictionary = _solver.Filter("abdicataire", "?..?..?.???");
+            var dictionary2 = _solver.Filter("litterature", "???.??!!?..");
+            var dictionary3 = _solver.Filter("ventilateur", "...?!?!!!!!");
+            Assert.IsFalse(dictionary3.ContainsKey("realisateur"));
         }
 
         //[TestMethod]

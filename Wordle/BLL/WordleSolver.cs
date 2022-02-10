@@ -75,7 +75,7 @@ namespace Wordle
             {
                 if (chara == '?')
                 {
-                    characterAtLeastCount.Add(word[i], CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
+                    if(! characterAtLeastCount.ContainsKey(word[i])) characterAtLeastCount.Add(word[i], CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
                     stringNotToMatch = stringNotToMatch.Append( word[i]);
                 }
                 else
@@ -115,12 +115,13 @@ namespace Wordle
                     //yellow + RED => on un compte juste
                     else if (characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
                     {
-                        if (characterCount.ContainsKey(word[i]))  characterCount.Add(word[i], characterAtLeastCount.Single(t => t.Key == word[i]).Value);
+                        if (!characterCount.ContainsKey(word[i]))  characterCount.Add(word[i], characterAtLeastCount.Single(t => t.Key == word[i]).Value);
+
                     }
                     //RED=>LettersNotPresent => count = 0
                     else
                     {
-                        if(characterCount.ContainsKey(word[i])) characterCount.Add(word[i], 0);
+                        if(!characterCount.ContainsKey(word[i])) characterCount.Add(word[i], 0);
                     }
                 }
 

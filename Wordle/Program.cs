@@ -16,10 +16,13 @@ while (true)
         _solver.Reset();
         Console.WriteLine("Game has been reset !");
     }
-    var split = enteredLine.Split('+');
-    var pattern = "";
-    if (split.Length != 1) pattern = split[1];
-    var solution = _solver.Filter(split[0], pattern);
+    else
+    {
+        var split = enteredLine.Split('+');
+        var pattern = "";
+        if (split.Length != 1) pattern = split[1];
+        var solution = _solver.Filter(split[0], pattern);
 
-    foreach (var (key, value) in solution) Console.WriteLine($"{key} , {value}");
+        foreach (var (key, value) in solution) Console.WriteLine($"{key} , {value}");
+    }
 }
