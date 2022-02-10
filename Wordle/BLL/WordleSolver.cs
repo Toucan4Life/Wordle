@@ -17,11 +17,6 @@ namespace Wordle
             _searcher = new WordSearcher(wordDictionary);
         }
 
-        public IEnumerable<char> CharacterInRegexToMatch()
-        {
-            return _searcher.regexesToMatch.SelectMany(reg=>reg.ToString().Replace(".", string.Empty).Replace("$", string.Empty).Replace("^", string.Empty));
-        }
-
         public void Reset()
         {
             _searcher.Reset();
@@ -61,7 +56,7 @@ namespace Wordle
             {
                 if (chara == '?')
                 {
-                    _searcher.AddAtLeastCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
+                    _searcher.AddAtLeastCharacterCount(word[i], _searcher.CharacterInRegexToMatch().Count(t => t == word[i]) + 1);
                     stringNotToMatch = stringNotToMatch.Append( word[i]);
                 }
                 else
@@ -84,15 +79,15 @@ namespace Wordle
             {
                 if (chara == '.')
                 {
-                    //Green + not yellow => on a le compte juste
-                    if (CharacterInRegexToMatch().Any(t=>t== word[i]) && _searcher.characterAtLeastCount.Select(t => t.Key).All(p => p != word[i]))
+                    //Green + RED => on a le compte juste
+                    if (_searcher.CharacterInRegexToMatch().Any(t=>t== word[i]) && _searcher.characterAtLeastCount.Select(t => t.Key).All(p => p != word[i]))
                     {
-                        _searcher.AddCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]));
+                        _searcher.AddCharacterCount(word[i], _searcher.CharacterInRegexToMatch().Count(t => t == word[i]));
                     }
                     //Green + yellow => on un compte pas juste
-                    else if (CharacterInRegexToMatch().Any(t => t == word[i]) && _searcher.characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
+                    else if (_searcher.CharacterInRegexToMatch().Any(t => t == word[i]) && _searcher.characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
                     {
-                       _searcher.AddAtLeastCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]));
+                       _searcher.AddAtLeastCharacterCount(word[i], _searcher.CharacterInRegexToMatch().Count(t => t == word[i]));
                     }
                     //yellow + RED => on un compte juste
                     //todo:wtf

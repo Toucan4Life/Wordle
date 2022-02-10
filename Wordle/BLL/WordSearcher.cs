@@ -20,6 +20,11 @@ namespace Wordle.BLL
             this.wordDictionary = wordDictionary;
         }
 
+        public IEnumerable<char> CharacterInRegexToMatch()
+        {
+            return regexesToMatch.SelectMany(reg => reg.ToString().Replace(".", string.Empty).Replace("$", string.Empty).Replace("^", string.Empty));
+        }
+
         public void Reset()
         {
             regexesNotToMatch = new List<Regex>();
