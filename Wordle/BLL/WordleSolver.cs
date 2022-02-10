@@ -10,7 +10,6 @@ namespace Wordle
 {
     public class WordleSolver
     {
-        Dictionary<char, int> characterCount = new();
         Dictionary<char, int> characterAtLeastCount = new();
         private readonly Dictionary<string, float> _wordDictionary;
         private WordSearcher _searcher = new();
@@ -36,7 +35,7 @@ namespace Wordle
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
 
-            return _wordDictionary.Where(word => Predicate(word.Key, _searcher.regexesToMatch, _searcher.regexesNotToMatch))
+            return _wordDictionary.Where(word => Predicate(word.Key, _searcher.regexesToMatch,_searcher.characterCount, _searcher.regexesNotToMatch))
                 .OrderByDescending(t => t.Value).Take(20).ToDictionary(t => t.Key, t => t.Value);
         }
 
@@ -46,7 +45,7 @@ namespace Wordle
             
             for (var i = 0 ; i < pattern.Length ; i++)
             {
-                stringToMatch=stringToMatch.Append(pattern[i] == '!' ? word[i] : '.');
+                stringToMatch = stringToMatch.Append(pattern[i] == '!' ? word[i] : '.');
             }
 
             _searcher.AddRegexToMatch(new Regex('^' + stringToMatch.ToString() + '$'));
@@ -91,7 +90,7 @@ namespace Wordle
                     //Green + not yellow => on a le compte juste
                     if (CharacterInRegexToMatch().Any(t=>t== word[i]) && characterAtLeastCount.Select(t => t.Key).All(p => p != word[i]))
                     {
-                        characterCount.Add(word[i], CharacterInRegexToMatch().Count(t => t == word[i]));
+                        _searcher.AddCharacterCount(word[i], CharacterInRegexToMatch().Count(t => t == word[i]));
                     }
                     //Green + yellow => on un compte pas juste
                     else if (CharacterInRegexToMatch().Any(t => t == word[i]) && characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
@@ -105,13 +104,12 @@ namespace Wordle
                     //yellow + RED => on un compte juste
                     else if (characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
                     {
-                        if (!characterCount.ContainsKey(word[i]))  characterCount.Add(word[i], characterAtLeastCount.Single(t => t.Key == word[i]).Value);
-
+                        _searcher.AddCharacterCount(word[i], characterAtLeastCount.Single(t => t.Key == word[i]).Value);
                     }
                     //RED=>LettersNotPresent => count = 0
                     else
                     {
-                        if(!characterCount.ContainsKey(word[i])) characterCount.Add(word[i], 0);
+                        _searcher.AddCharacterCount(word[i], 0);
                     }
                 }
 
@@ -120,7 +118,7 @@ namespace Wordle
 
         }
 
-        bool Predicate(string word, List<Regex> regex,
+        bool Predicate(string word, List<Regex> regex, Dictionary<char, int> characterCount,
             IEnumerable<Regex> regexNotToMatch)
         {
             var isRegexMatch = regex.All(reg => reg.IsMatch(word));

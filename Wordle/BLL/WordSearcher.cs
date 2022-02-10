@@ -11,8 +11,8 @@ namespace Wordle.BLL
     {
         public List<Regex> regexesNotToMatch = new();
         public List<Regex> regexesToMatch = new();
-        Dictionary<char, int> characterCount = new();
-        Dictionary<char, int> characterAtLeastCount = new();
+        public Dictionary<char, int> characterCount = new();
+        public Dictionary<char, int> characterAtLeastCount = new();
 
         public void Reset()
         {
@@ -22,20 +22,28 @@ namespace Wordle.BLL
             characterAtLeastCount = new Dictionary<char, int>();
         }
 
-        public List<Regex> AddRegexToMatch(Regex regex)
+        public void AddRegexToMatch(Regex regex)
         {
-
             regexesToMatch.Add(regex);
-
-            return regexesToMatch;
         }
 
-        public List<Regex> AddRegexesNotToMatch(Regex regex)
+        public void AddRegexesNotToMatch(Regex regex)
         {
-
             regexesNotToMatch.Add(regex);
+        }
 
-            return regexesToMatch;
+        public Dictionary<char, int> AddCharacterCount(char character, int count)
+        {
+            if (characterCount.ContainsKey(character))
+            {
+                characterCount[character] = Math.Max(characterCount[character], count);
+            } else
+            {
+                characterCount[character] = count;
+            }
+
+
+            return characterCount;
         }
     }
 
