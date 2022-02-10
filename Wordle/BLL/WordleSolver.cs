@@ -56,7 +56,7 @@ namespace Wordle
             {
                 if (chara == '?')
                 {
-                    _searcher.AddAtLeastCharacterCount(word[i], word.Where((charInWord, j) => charInWord == word[i] && pattern[j] != '.').Count());
+                    _searcher.AddAtLeastCharacterCount(word[i], CountOccurenceOfPresentCharacterInWord( word,  pattern,  i));
 
                     stringNotToMatch = stringNotToMatch.Append( word[i]);
                 }
@@ -71,6 +71,10 @@ namespace Wordle
             _searcher.AddRegexesNotToMatch(new Regex(stringNotToMatch.ToString()));
 
         }
+        public int CountOccurenceOfPresentCharacterInWord(string word, string pattern, int i)
+        {
+            return word.Where((charInWord, j) => charInWord == word[i] && pattern[j] != '.').Count();
+        }
 
         public void CheckNotPresentCharRule(string word, string pattern)
         {
@@ -80,7 +84,7 @@ namespace Wordle
             {
                 if (chara == '.')
                 {
-                    _searcher.AddCharacterCount(word[i], word.Where((charInWord, j) => charInWord == word[i] && pattern[j] != '.').Count());
+                    _searcher.AddCharacterCount(word[i], CountOccurenceOfPresentCharacterInWord(word, pattern, i));
                 }
 
                 i++;
