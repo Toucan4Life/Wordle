@@ -28,7 +28,7 @@ namespace Wordle
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
 
-            return _searcher.Search().Take(20).ToDictionary(t => t.Key, t => t.Value);
+            return _searcher.Search().OrderByDescending(t=>t.Value).Take(20).ToDictionary(t => t.Key, t => t.Value);
         }
 
         public void CheckCorrectCharRule(string word, string pattern)
