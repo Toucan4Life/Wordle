@@ -10,7 +10,6 @@ namespace Wordle
 {
     public class WordleSolver
     {
-        List<Regex> regexesNotToMatch = new();
         Dictionary<char, int> characterCount = new();
         Dictionary<char, int> characterAtLeastCount = new();
         private readonly Dictionary<string, float> _wordDictionary;
@@ -37,7 +36,7 @@ namespace Wordle
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
 
-            return _wordDictionary.Where(word => Predicate(word.Key, _searcher.regexesToMatch, regexesNotToMatch))
+            return _wordDictionary.Where(word => Predicate(word.Key, _searcher.regexesToMatch, _searcher.regexesNotToMatch))
                 .OrderByDescending(t => t.Value).Take(20).ToDictionary(t => t.Key, t => t.Value);
         }
 
@@ -57,7 +56,7 @@ namespace Wordle
         {
             var stringNotToMatch = new StringBuilder();
 
-            int i = 0;
+            var i = 0;
             if (pattern.All(t => t != '?'))
             {
                 return;
@@ -77,7 +76,7 @@ namespace Wordle
                 i++;
             }
 
-            regexesNotToMatch.Add(new Regex(stringNotToMatch.ToString()));
+            _searcher.AddRegexesNotToMatch(new Regex(stringNotToMatch.ToString()));
 
         }
 

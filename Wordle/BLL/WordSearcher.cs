@@ -9,7 +9,7 @@ namespace Wordle.BLL
 {
     public class WordSearcher
     {
-        List<Regex> regexesNotToMatch = new();
+        public List<Regex> regexesNotToMatch = new();
         public List<Regex> regexesToMatch = new();
         Dictionary<char, int> characterCount = new();
         Dictionary<char, int> characterAtLeastCount = new();
@@ -26,6 +26,14 @@ namespace Wordle.BLL
         {
 
             regexesToMatch.Add(regex);
+
+            return regexesToMatch;
+        }
+
+        public List<Regex> AddRegexesNotToMatch(Regex regex)
+        {
+
+            regexesNotToMatch.Add(regex);
 
             return regexesToMatch;
         }
