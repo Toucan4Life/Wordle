@@ -73,33 +73,13 @@ namespace Wordle
 
         public void CheckNotPresentCharRule(string word, string pattern)
         {
-            int i = 0;
+            var i = 0;
 
             foreach (var chara in pattern)
             {
                 if (chara == '.')
                 {
-                    //Green + RED => on a le compte juste
-                    if (_searcher.CharacterInRegexToMatch().Any(t=>t== word[i]) && _searcher.characterAtLeastCount.Select(t => t.Key).All(p => p != word[i]))
-                    {
-                        _searcher.AddCharacterCount(word[i], _searcher.CharacterInRegexToMatch().Count(t => t == word[i]));
-                    }
-                    //Green + yellow => on un compte pas juste
-                    else if (_searcher.CharacterInRegexToMatch().Any(t => t == word[i]) && _searcher.characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
-                    {
-                       _searcher.AddAtLeastCharacterCount(word[i], _searcher.CharacterInRegexToMatch().Count(t => t == word[i]));
-                    }
-                    //yellow + RED => on un compte juste
-                    //todo:wtf
-                    else if (_searcher.characterAtLeastCount.Select(t => t.Key).Any(p => p == word[i]))
-                    {
-                        _searcher.AddCharacterCount(word[i], _searcher.characterAtLeastCount.Single(t => t.Key == word[i]).Value);
-                    }
-                    //RED=>LettersNotPresent => count = 0
-                    else
-                    {
-                        _searcher.AddCharacterCount(word[i], 0);
-                    }
+                    _searcher.AddCharacterCount(word[i], word.Where((charInWord, j) => charInWord == word[i] && pattern[j] != '.').Count());
                 }
 
                 i++;
