@@ -9,73 +9,68 @@ namespace Wordle.BLL
 {
     public class WordSearcher
     {
-        public List<Regex> regexesNotToMatch = new();
-        public List<Regex> regexesToMatch = new();
-        public Dictionary<char, int> characterCount = new();
-        public Dictionary<char, int> characterAtLeastCount = new();
-        public Dictionary<string, float> wordDictionary;
+        private List<Regex> _regexesNotToMatch = new();
+        private List<Regex> _regexesToMatch = new();
+        private Dictionary<char, int> _characterCount = new();
+        private Dictionary<char, int> _characterAtLeastCount = new();
+        private readonly Dictionary<string, float> _wordDictionary;
 
         public WordSearcher(Dictionary<string, float> wordDictionary)
         {
-            this.wordDictionary = wordDictionary;
-        }
-
-        public IEnumerable<char> CharacterInRegexToMatch()
-        {
-            return regexesToMatch.SelectMany(reg => reg.ToString().Replace(".", string.Empty).Replace("$", string.Empty).Replace("^", string.Empty));
+            _wordDictionary = wordDictionary;
         }
 
         public void Reset()
         {
-            regexesNotToMatch = new List<Regex>();
-            regexesToMatch = new List<Regex>();
-            characterCount = new Dictionary<char, int>();
-            characterAtLeastCount = new Dictionary<char, int>();
+            _regexesNotToMatch = new List<Regex>();
+            _regexesToMatch = new List<Regex>();
+            _characterCount = new Dictionary<char, int>();
+            _characterAtLeastCount = new Dictionary<char, int>();
         }
 
         public void AddRegexToMatch(Regex regex)
         {
-            regexesToMatch.Add(regex);
+            _regexesToMatch.Add(regex);
         }
 
         public void AddRegexesNotToMatch(Regex regex)
         {
-            regexesNotToMatch.Add(regex);
+            _regexesNotToMatch.Add(regex);
         }
 
         public void AddCharacterCount(char character, int count)
         {
-            if (characterCount.ContainsKey(character))
+            if (_characterCount.ContainsKey(character))
             {
-                characterCount[character] = Math.Max(characterCount[character], count);
+                _characterCount[character] = Math.Max(_characterCount[character], count);
             } else
             {
-                characterCount[character] = count;
+                _characterCount[character] = count;
             }
         }
 
         public void AddAtLeastCharacterCount(char character, int count)
         {
-            if (characterAtLeastCount.ContainsKey(character))
+            if (_characterAtLeastCount.ContainsKey(character))
             {
-                characterAtLeastCount[character] = Math.Max(characterAtLeastCount[character], count);
+                _characterAtLeastCount[character] = Math.Max(_characterAtLeastCount[character], count);
             }
             else
             {
-                characterAtLeastCount[character] = count;
+                _characterAtLeastCount[character] = count;
             }
         }
 
         public IEnumerable<KeyValuePair<string, float>> Search()
         {
-            return wordDictionary.Where(word=>isWordConformToRule(word.Key));
+            return _wordDictionary.Where(word=>IsWordConformToRule(word.Key));
         }
 
-        public bool isWordConformToRule(string word)
+        public bool IsWordConformToRule(string word)
         {
-            return regexesToMatch.All(reg => reg.IsMatch(word)) && regexesNotToMatch.All(reg => !reg.IsMatch(word)) &&
-                   characterCount.All(t => word.Count(v => v == t.Key) == t.Value) &&
-                   characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
+            return _regexesToMatch.All(reg => reg.IsMatch(word)) && _regexesNotToMatch.All(reg => !reg.IsMatch(word)) &&
+                   _characterCount.All(t => word.Count(v => v == t.Key) == t.Value) &&
+                   _characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
         }
     }
 

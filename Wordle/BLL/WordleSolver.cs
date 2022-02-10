@@ -78,16 +78,13 @@ namespace Wordle
 
         public void CheckNotPresentCharRule(string word, string pattern)
         {
-            var i = 0;
 
-            foreach (var chara in pattern)
+            for (var i = 0; i < pattern.Length; i++)
             {
-                if (chara == '.')
+                if (pattern[i] == '.')
                 {
                     _searcher.AddCharacterCount(word[i], CountOccurenceOfPresentCharacterInWord(word, pattern, i));
                 }
-
-                i++;
             }
 
         }
