@@ -10,12 +10,6 @@ namespace IntegrationTests
     [TestClass]
     public class FilterTests
     {
-        //[TestMethod]
-        //public void SolverReturnWordWhenWholeWordIsPassed2()
-        //{
-        //    WordleSolver _solver = new(new Dictionary<string, float> { { "coucou", 0 } });
-        //    Assert.IsFalse(_solver.Filter("", "......").ContainsKey("coucou"));
-        //}
 
         [TestMethod]
         public void SolverReturnWordWhenWholeWordIsPassed()
@@ -27,7 +21,7 @@ namespace IntegrationTests
             };
 
             WordleSolver _solver = new();
-            Assert.IsTrue(  _solver.Filter("coucou", patterns).Any(t=>t.Key == "coucou"));
+            Assert.IsTrue(  _solver.Filter("coucou", patterns, new WordSearcher(new Dictionary<string, float> { { "coucou", 0 } })).Any(t=>t.Key == "coucou"));
         }
 
         //[TestMethod]
@@ -46,7 +40,7 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Correct
             };
             WordleSolver _solver = new();
-            Assert.IsTrue(_solver.Filter("coucou", patterns).Any(t => t.Key == "coucou"));
+            Assert.IsTrue(_solver.Filter("coucou", patterns, new WordSearcher(new Dictionary<string, float> { { "coucou", 0 } })).Any(t => t.Key == "coucou"));
         }
 
         [TestMethod]
@@ -58,7 +52,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Incorrect
             };
             WordleSolver _solver = new();
-            Assert.AreEqual(0, _solver.Filter("coucou", patterns).Count());
+            Assert.AreEqual(0, _solver.Filter("coucou", patterns, new WordSearcher(new Dictionary<string, float> { { "toucan", 0 } })).Count());
         }
 
         [TestMethod]
@@ -70,7 +64,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Incorrect
             };
             WordleSolver _solver = new();
-            var enumerable = _solver.Filter("boubbb", patterns);
+            var enumerable = _solver.Filter("boubbb", patterns, new WordSearcher(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 } }));
             Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
             Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
         }
@@ -86,7 +80,7 @@ namespace IntegrationTests
             WordleSolver _solver =
                 new();
 
-            var enumerable = _solver.Filter("boubbb", patterns);
+            var enumerable = _solver.Filter("boubbb", patterns, new WordSearcher(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } }));
             Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
             Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
             Assert.AreEqual(2, enumerable.Count());
@@ -103,7 +97,7 @@ namespace IntegrationTests
             WordleSolver _solver =
                 new();
 
-            var enumerable = _solver.Filter("doucat", patterns);
+            var enumerable = _solver.Filter("doucat", patterns, new WordSearcher(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } }));
             Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
             Assert.AreEqual(1, enumerable.Count());
         }
@@ -119,7 +113,7 @@ namespace IntegrationTests
             WordleSolver _solver =
                 new();
 
-            var enumerable = _solver.Filter("coucot", patterns);
+            var enumerable = _solver.Filter("coucot", patterns, new WordSearcher(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } }));
             Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
             Assert.AreEqual(1, enumerable.Count());
         }
@@ -135,7 +129,7 @@ namespace IntegrationTests
             WordleSolver _solver =
                 new();
 
-            var enumerable = _solver.Filter("coucot", patterns);
+            var enumerable = _solver.Filter("coucot", patterns, new WordSearcher(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } }));
             Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
             Assert.AreEqual(1, enumerable.Count());
         }
@@ -149,7 +143,7 @@ namespace IntegrationTests
                 Pattern.Correct
             };
             WordleSolver _solver = new();
-            Assert.IsFalse(_solver.Filter("vivre", patterns).Any(t => t.Key == "vivre"));
+            Assert.IsFalse(_solver.Filter("vivre", patterns, new WordSearcher(new Dictionary<string, float> { { "vivre", 0 }, { "livre", 0 }, { "givre", 0 } })).Any(t => t.Key == "vivre"));
         }
 
         [TestMethod]
@@ -161,7 +155,7 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Incorrect
             };
             WordleSolver _solver = new();
-            var response = _solver.Filter("vivre", patterns);
+            var response = _solver.Filter("vivre", patterns, new WordSearcher(new Dictionary<string, float> { { "tivrv", 0 } }));
             Assert.IsTrue(response.Any(t => t.Key == "tivrv"));
         }
 
@@ -173,7 +167,7 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect
             };
             WordleSolver _solver = new();
-            Assert.IsTrue(_solver.Filter("eeet", patterns).Any(t => t.Key == "eaye"));
+            Assert.IsTrue(_solver.Filter("eeet", patterns, new WordSearcher(new Dictionary<string, float> { { "eaye", 0 } })).Any(t => t.Key == "eaye"));
         }
 
         [TestMethod]
@@ -187,7 +181,7 @@ namespace IntegrationTests
                 Pattern.Incorrect
             };
             WordleSolver _solver = new();
-            Assert.IsFalse(_solver.Filter("maintenant", patterns).Any(t => t.Key == "poursuivis"));
+            Assert.IsFalse(_solver.Filter("maintenant", patterns, new WordSearcher(new Dictionary<string, float> { { "poursuivis", 0 } })).Any(t => t.Key == "poursuivis"));
         }
 
         [TestMethod]
@@ -201,7 +195,7 @@ namespace IntegrationTests
                 Pattern.Incorrect
             };
             WordleSolver _solver = new();
-            Assert.IsTrue(_solver.Filter("maintenant", patterns).Any(t => t.Key == "proportion"));
+            Assert.IsTrue(_solver.Filter("maintenant", patterns, new WordSearcher(new Dictionary<string, float> { { "proportion", 0 } })).Any(t => t.Key == "proportion"));
         }
 
         [TestMethod]
@@ -222,8 +216,12 @@ namespace IntegrationTests
                 Pattern.Incorrect
             };
             WordleSolver _solver = new();
-            var dictionary = _solver.Filter("maintenant", patterns1);
-            var dictionary2 = _solver.Filter("exactement", patterns2);
+            var dictionary = _solver
+                .Filter("maintenant", patterns1,
+                    new WordSearcher(new Dictionary<string, float>
+                        {{"maintenant", 0}, {"exactement", 0}, {"encourager", 0}}))
+                .ToDictionary(t => t.Key, t => t.Value);
+            var dictionary2 = _solver.Filter("exactement", patterns2, new WordSearcher(dictionary ));
             Assert.IsTrue(dictionary2.Any(t => t.Key == "encourager"));
         }
 
@@ -243,8 +241,8 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Correct
             };
             WordleSolver _solver = new();
-            var dictionary = _solver.Filter("restaure", patterns1);
-            var dictionary2 = _solver.Filter("habitude", patterns2);
+            var dictionary = _solver.Filter("restaure", patterns1, new WordSearcher(new Dictionary<string, float> { { "mauvaise", 0 }, { "aiguille", 0 }, { "habitude", 0 }, { "restaure", 0 } }));
+            var dictionary2 = _solver.Filter("habitude", patterns2, new WordSearcher(new Dictionary<string, float> { { "coucou", 0 } }));
             Assert.IsFalse(dictionary2.Any(t => t.Key == "mauvaise"));
         }
 
@@ -273,9 +271,15 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Correct
             };
             WordleSolver _solver = new();
-            var dictionary = _solver.Filter("abdicataire", patterns1);
-            var dictionary2 = _solver.Filter("litterature", patterns2);
-            var dictionary3 = _solver.Filter("ventilateur", patterns3);
+            var dictionary = _solver
+                .Filter("abdicataire", patterns1,
+                    new WordSearcher(new Dictionary<string, float>
+                    {
+                        {"abdicataire", 0}, {"litterature", 0}, {"ventilateur", 0}, {"realisateur", 0},
+                        {"utilisateur", 0}
+                    })).ToDictionary(t => t.Key, t => t.Value);
+            var dictionary2 = _solver.Filter("litterature", patterns2, new WordSearcher(dictionary)).ToDictionary(t => t.Key, t => t.Value);
+            var dictionary3 = _solver.Filter("ventilateur", patterns3, new WordSearcher(dictionary2));
             Assert.IsFalse(dictionary3.Any(t => t.Key == "realisateur"));
         }
 

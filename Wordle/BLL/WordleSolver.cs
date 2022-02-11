@@ -10,7 +10,7 @@ namespace Wordle
 {
     public class WordleSolver
     {
-        public List<KeyValuePair<string, float>> Filter(string word, IEnumerable<Pattern> pattern, WordSearcher searcher=null)
+        public List<KeyValuePair<string, float>> Filter(string word, IEnumerable<Pattern> pattern, WordSearcher searcher)
         {
             searcher.SetWordLength(pattern.Count());
 
