@@ -20,7 +20,7 @@ namespace IntegrationTests
         public void SolverReturnWordWhenWholeWordIsPassed()
         {
             WordleSolver _solver = new(new Dictionary<string, float> {{"coucou", 0}});
-            Assert.IsTrue(  _solver.Filter("coucou", "!!!!!!").ContainsKey("coucou"));
+            Assert.IsTrue(  _solver.Filter("coucou", "!!!!!!").Any(t=>t.Key == "coucou"));
         }
 
         //[TestMethod]
@@ -34,7 +34,7 @@ namespace IntegrationTests
         public void SolverDictionaryWordWhenThereIsOnlyOneWord()
         {
             WordleSolver _solver = new(new Dictionary<string, float> {{"coucou", 0}});
-            Assert.IsTrue(_solver.Filter("coucou","!!!!!!").ContainsKey("coucou"));
+            Assert.IsTrue(_solver.Filter("coucou","!!!!!!").Any(t => t.Key == "coucou"));
         }
 
         [TestMethod]
@@ -49,8 +49,8 @@ namespace IntegrationTests
         {
             WordleSolver _solver = new(new Dictionary<string, float> {{"toucan", 0}, {"coucou", 1}});
             var enumerable = _solver.Filter("boubbb", ".!!...");
-            Assert.IsTrue(enumerable.ContainsKey("coucou"));
-            Assert.IsTrue(enumerable.ContainsKey("toucan"));
+            Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
+            Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
         }
 
         [TestMethod]
@@ -60,9 +60,9 @@ namespace IntegrationTests
                 new(new Dictionary<string, float> { {"toucan", 0}, {"coucou", 1}, {"ehbahnon", 0}, {"couchera", 1}});
 
             var enumerable = _solver.Filter("boubbb", ".!!...");
-            Assert.IsTrue(enumerable.ContainsKey("coucou"));
-            Assert.IsTrue(enumerable.ContainsKey("toucan"));
-            Assert.AreEqual(2, enumerable.Count);
+            Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
+            Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
+            Assert.AreEqual(2, enumerable.Count());
         }
 
         [TestMethod]
@@ -72,8 +72,8 @@ namespace IntegrationTests
                 new(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } });
 
             var enumerable = _solver.Filter("doucat", ".!!!!?");
-            Assert.IsTrue(enumerable.ContainsKey("toucan"));
-            Assert.AreEqual(1, enumerable.Count);
+            Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
+            Assert.AreEqual(1, enumerable.Count());
         }
 
         [TestMethod]
@@ -83,8 +83,8 @@ namespace IntegrationTests
                 new(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } });
 
             var enumerable = _solver.Filter("coucot", ".!!!.?");
-            Assert.IsTrue(enumerable.ContainsKey("toucan"));
-            Assert.AreEqual(1, enumerable.Count);
+            Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
+            Assert.AreEqual(1, enumerable.Count());
         }
 
         [TestMethod]
@@ -94,15 +94,15 @@ namespace IntegrationTests
                 new(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } });
 
             var enumerable = _solver.Filter("coucot", "!!!!!.");
-            Assert.IsTrue(enumerable.ContainsKey("coucou"));
-            Assert.AreEqual(1, enumerable.Count);
+            Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
+            Assert.AreEqual(1, enumerable.Count());
         }
 
         [TestMethod]
         public void RedGreen()
         {
             WordleSolver _solver = new(new Dictionary<string, float> { { "vivre", 0 }, { "livre", 0 } , { "givre", 0 } });
-            Assert.IsFalse(_solver.Filter("vivre", ".!!!!").ContainsKey("vivre"));
+            Assert.IsFalse(_solver.Filter("vivre", ".!!!!").Any(t => t.Key == "vivre"));
         }
 
         [TestMethod]
@@ -110,28 +110,28 @@ namespace IntegrationTests
         {
             WordleSolver _solver = new(new Dictionary<string, float> { { "tivrv", 0 } });
             var response = _solver.Filter("vivre", "?!!!.");
-            Assert.IsTrue(response.ContainsKey("tivrv"));
+            Assert.IsTrue(response.Any(t => t.Key == "tivrv"));
         }
 
         [TestMethod]
         public void RedYellowGreen()
         {
             WordleSolver _solver = new(new Dictionary<string, float> { { "eaye", 0 } });
-            Assert.IsTrue(_solver.Filter("eeet", "!?..").ContainsKey("eaye"));
+            Assert.IsTrue(_solver.Filter("eeet", "!?..").Any(t => t.Key == "eaye"));
         }
 
         [TestMethod]
         public void RedYellowGreen1()
         {
             WordleSolver _solver = new(new Dictionary<string, float> { { "poursuivis", 0 } });
-            Assert.IsFalse(_solver.Filter("maintenant", "..???.....").ContainsKey("poursuivis"));
+            Assert.IsFalse(_solver.Filter("maintenant", "..???.....").Any(t => t.Key == "poursuivis"));
         }
 
         [TestMethod]
         public void RedYellowGreen2()
         {
             WordleSolver _solver = new(new Dictionary<string, float> { { "proportion", 0 } });
-            Assert.IsTrue(_solver.Filter("maintenant", "..???.....").ContainsKey("proportion"));
+            Assert.IsTrue(_solver.Filter("maintenant", "..???.....").Any(t => t.Key == "proportion"));
         }
 
         //[TestMethod]
@@ -149,7 +149,7 @@ namespace IntegrationTests
             WordleSolver _solver = new(new Dictionary<string, float> { { "maintenant", 0 }, { "exactement", 0 }, { "encourager", 0 } });
             var dictionary = _solver.Filter("maintenant", ".?.?.?....");
             var dictionary2 = _solver.Filter("exactement", "!.??.?..?.");
-            Assert.IsTrue(dictionary2.ContainsKey("encourager"));
+            Assert.IsTrue(dictionary2.Any(t => t.Key == "encourager"));
         }
 
         [TestMethod]
@@ -158,7 +158,7 @@ namespace IntegrationTests
             WordleSolver _solver = new(new Dictionary<string, float> { { "mauvaise", 0 }, { "aiguille", 0 },  { "habitude", 0 }, { "restaure", 0 } });
             var dictionary = _solver.Filter("restaure", "....??.!");
             var dictionary2 = _solver.Filter("habitude", ".?.?.?.!");
-            Assert.IsFalse(dictionary2.ContainsKey("mauvaise"));
+            Assert.IsFalse(dictionary2.Any(t => t.Key == "mauvaise"));
         }
 
         [TestMethod]
@@ -168,7 +168,7 @@ namespace IntegrationTests
             var dictionary = _solver.Filter("abdicataire", "?..?..?.???");
             var dictionary2 = _solver.Filter("litterature", "???.??!!?..");
             var dictionary3 = _solver.Filter("ventilateur", "...?!?!!!!!");
-            Assert.IsFalse(dictionary3.ContainsKey("realisateur"));
+            Assert.IsFalse(dictionary3.Any(t => t.Key == "realisateur"));
         }
 
         //[TestMethod]

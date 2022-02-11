@@ -37,7 +37,7 @@ namespace Wordle.BLL
 
         public void AddCharPosToMatch(char character, int pos)
         {
-            if (!_charPosToMatch.ContainsKey(character))
+            if (!_charPosToMatch.ContainsKey(pos))
                 _charPosToMatch.Add(pos, character);
         }
         public void AddCharPosToNotMatch(char character, int pos)

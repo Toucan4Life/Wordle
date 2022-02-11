@@ -21,7 +21,7 @@ while (true)
         var split = enteredLine.Split('+');
         var pattern = "";
         if (split.Length != 1) pattern = split[1];
-        var solution = _solver.Filter(split[0], pattern);
+        var solution = _solver.Filter(split[0], pattern).Take(20);
 
         foreach (var (key, value) in solution) Console.WriteLine($"{key} , {value}");
     }

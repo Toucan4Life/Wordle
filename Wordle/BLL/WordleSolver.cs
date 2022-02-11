@@ -22,14 +22,14 @@ namespace Wordle
             _searcher.Reset();
         }
 
-        public Dictionary<string, float> Filter(string word, string pattern)
+        public IOrderedEnumerable<KeyValuePair<string, float>> Filter(string word, string pattern)
         {
             _searcher.SetWordLenght(pattern.Length);
             CheckCorrectCharRule(word,pattern);
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
 
-            return _searcher.Search().OrderByDescending(t=>t.Value).Take(20).ToDictionary(t => t.Key, t => t.Value);
+            return _searcher.Search().OrderByDescending(t=>t.Value);
         }
 
         public void CheckCorrectCharRule(string word, string pattern)
