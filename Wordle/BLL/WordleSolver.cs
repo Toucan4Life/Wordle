@@ -52,8 +52,6 @@ namespace Wordle
 
         public float CalculateEntropy(string word, WordSearcher wordSearcher)
         {
-            wordSearcher.SetWordLength(word.Length);
-            wordSearcher.RememberState();
 
             var allPossiblePatternCombination = CartesianProduct(word.Select(_ => new List<Pattern>
                 {Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced}));
@@ -61,11 +59,12 @@ namespace Wordle
             double sum = 0;
             for (var i=0; i<allPossiblePatternCombination.Count();i++)
             {
+                wordSearcher = new WordSearcher(_wordDictionary);
+                wordSearcher.SetWordLength(word.Length);
                 float totalWord = wordSearcher.Search().Count();
                 var count = Filter(word, allPossiblePatternCombination.ElementAt(i), wordSearcher).Count();
                 var t = count / totalWord;
                 sum += t > 0 ? t * Math.Log2(1 / t) : 0;
-                wordSearcher.RollbackState();
             }
 
             return (float)sum;

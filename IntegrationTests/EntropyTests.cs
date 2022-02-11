@@ -64,15 +64,16 @@ namespace IntegrationTests
         [TestMethod]
         public void EntropyCalculationDoesnotAlterSearcherState1()
         {
-            var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
+            var wordDictionary = new Dictionary<string, float> { { "ab", 0 }, { "ac", 0 } };
             WordleSolver _solver = new(wordDictionary);
 
             var wordSearcher = new WordSearcher(wordDictionary);
             //wordSearcher._wordLength = 0;
-            _solver.CalculateEntropy("abe", wordSearcher);
-            var entropy = _solver.CalculateEntropy("aba", wordSearcher);
+            var entropy = _solver.CalculateEntropy("ab", wordSearcher);
+            var entropy2 = _solver.CalculateEntropy("ac", wordSearcher);
 
-            Assert.AreEqual(2.5, entropy);
+            Assert.AreEqual(1, entropy);
+            Assert.AreEqual(1, entropy2);
         }
     }
 }

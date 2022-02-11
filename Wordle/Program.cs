@@ -8,9 +8,8 @@ internal class Program
 {
     private static void Main()
     {
-        var words = new CsvReader().GetAllWords("Lexique381.csv");
-        var searcher = new WordSearcher(words);
-        var _solver = new WordleSolver(words);
+
+        Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
 
         Console.WriteLine(
             "Type a word, Add pattern with +. use \".\" for not in word, ? for misplaced and ! for correct letters.type \"newgame\" to reset game");
@@ -19,7 +18,7 @@ internal class Program
             var enteredLine = Console.ReadLine();
             if (enteredLine == "newgame")
             {
-                searcher = new WordSearcher(words);
+                possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
                 Console.WriteLine("Game has been reset !");
             }
             else
@@ -28,11 +27,12 @@ internal class Program
 
                 if (patternString.Length != enteredLine.Length)
                     throw new ArgumentException("Pattern and Word are not same size");
+                var searcher = new WordSearcher(possibleSolution);
+                var _solver = new WordleSolver(possibleSolution);
+                possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
+                    .OrderByDescending(t => t.Value).Take(20).ToDictionary(t=>t.Key, t=>t.Value);
 
-                var solution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
-                    .OrderByDescending(t => t.Value).Take(20);
-
-                foreach (var (key, value) in solution) Console.WriteLine($"{key} , {value}");
+                foreach (var (key, value) in possibleSolution) Console.WriteLine($"{key} , {value}");
             }
         }
     }
