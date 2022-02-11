@@ -9,7 +9,7 @@ internal class Program
     private static void Main()
     {
         var words = new CsvReader().GetAllWords("Lexique381.csv");
-
+        var searcher = new WordSearcher(words);
         var _solver = new WordleSolver(words);
 
         Console.WriteLine(
@@ -19,7 +19,7 @@ internal class Program
             var enteredLine = Console.ReadLine();
             if (enteredLine == "newgame")
             {
-                _solver.Reset();
+                searcher = new WordSearcher(words);
                 Console.WriteLine("Game has been reset !");
             }
             else
@@ -29,7 +29,7 @@ internal class Program
                 if (patternString.Length != enteredLine.Length)
                     throw new ArgumentException("Pattern and Word are not same size");
 
-                var solution = _solver.Filter(enteredLine, patternString.Select(MapPattern).ToList())
+                var solution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
                     .OrderByDescending(t => t.Value).Take(20);
 
                 foreach (var (key, value) in solution) Console.WriteLine($"{key} , {value}");
