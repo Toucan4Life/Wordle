@@ -24,6 +24,7 @@ namespace Wordle
 
         public Dictionary<string, float> Filter(string word, string pattern)
         {
+            _searcher.SetWordLenght(pattern.Length);
             CheckCorrectCharRule(word,pattern);
             CheckMisPlacedCharRule(word,pattern);
             CheckNotPresentCharRule(word,pattern);
@@ -33,42 +34,30 @@ namespace Wordle
 
         public void CheckCorrectCharRule(string word, string pattern)
         {
-            var stringToMatch = new StringBuilder();
             
             for (var i = 0 ; i < pattern.Length ; i++)
             {
-                stringToMatch = stringToMatch.Append(pattern[i] == '!' ? word[i] : '.');
+                if (pattern[i] == '!')
+                    _searcher.AddCharPosToMatch(word[i],i);
             }
-
-            _searcher.AddRegexToMatch(new Regex('^' + stringToMatch.ToString() + '$'));
         }
 
         public void CheckMisPlacedCharRule(string word, string pattern)
         {
-            var stringNotToMatch = new StringBuilder();
-
-            var i = 0;
             if (pattern.All(t => t != '?'))
             {
                 return;
             }
-            foreach (var chara in pattern)
+            for (var i = 0; i < pattern.Length; i++)
             {
-                if (chara == '?')
+                if (pattern[i] == '?')
                 {
-                    _searcher.AddAtLeastCharacterCount(word[i], CountOccurenceOfPresentCharacterInWord( word,  pattern,  i));
-
-                    stringNotToMatch = stringNotToMatch.Append( word[i]);
-                }
-                else
-                {
-                    stringNotToMatch = stringNotToMatch.Append('.');
+                    _searcher.AddAtLeastCharacterCount(word[i], CountOccurenceOfPresentCharacterInWord(word, pattern, i));
+                    _searcher.AddCharPosToNotMatch(word[i], i);
                 }
 
                 i++;
             }
-
-            _searcher.AddRegexesNotToMatch(new Regex(stringNotToMatch.ToString()));
 
         }
         public int CountOccurenceOfPresentCharacterInWord(string word, string pattern, int i)

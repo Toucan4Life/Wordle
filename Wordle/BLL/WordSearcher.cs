@@ -9,10 +9,11 @@ namespace Wordle.BLL
 {
     public class WordSearcher
     {
-        private List<Regex> _regexesNotToMatch = new();
-        private List<Regex> _regexesToMatch = new();
         private Dictionary<char, int> _characterCount = new();
         private Dictionary<char, int> _characterAtLeastCount = new();
+        private Dictionary<int, char> _charPosToMatch = new();
+        private List<Tuple<int, char>> _charPosToNotMatch = new();
+        private int _wordLength = 0;
         private readonly Dictionary<string, float> _wordDictionary;
 
         public WordSearcher(Dictionary<string, float> wordDictionary)
@@ -22,20 +23,26 @@ namespace Wordle.BLL
 
         public void Reset()
         {
-            _regexesNotToMatch = new List<Regex>();
-            _regexesToMatch = new List<Regex>();
             _characterCount = new Dictionary<char, int>();
             _characterAtLeastCount = new Dictionary<char, int>();
+            _charPosToMatch = new Dictionary<int, char>();
+            _charPosToNotMatch = new List<Tuple<int, char>>();
+            _wordLength = 0;
         }
 
-        public void AddRegexToMatch(Regex regex)
+        public void SetWordLenght(int lenght)
         {
-            _regexesToMatch.Add(regex);
+            _wordLength = lenght;
         }
 
-        public void AddRegexesNotToMatch(Regex regex)
+        public void AddCharPosToMatch(char character, int pos)
         {
-            _regexesNotToMatch.Add(regex);
+            if (!_charPosToMatch.ContainsKey(character))
+                _charPosToMatch.Add(pos, character);
+        }
+        public void AddCharPosToNotMatch(char character, int pos)
+        {
+            _charPosToNotMatch.Add(new Tuple<int, char>(pos, character));
         }
 
         public void AddCharacterCount(char character, int count)
@@ -68,9 +75,11 @@ namespace Wordle.BLL
 
         public bool IsWordConformToRule(string word)
         {
-            return _regexesToMatch.All(reg => reg.IsMatch(word)) && _regexesNotToMatch.All(reg => !reg.IsMatch(word)) &&
+            return word.Length == _wordLength &&
                    _characterCount.All(t => word.Count(v => v == t.Key) == t.Value) &&
-                   _characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
+                   _characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value) &&
+                   _charPosToMatch.All(charpos => word[charpos.Key] == charpos.Value) &&
+                   _charPosToNotMatch.All(charpos => word[charpos.Item1] != charpos.Item2);
         }
     }
 
