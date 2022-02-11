@@ -18,10 +18,8 @@ while (true)
     }
     else
     {
-        var split = enteredLine.Split('+');
-        var pattern = "";
-        if (split.Length != 1) pattern = split[1];
-        var solution = _solver.Filter(split[0], pattern).OrderByDescending(t => t.Value).Take(20);
+        var pattern = Console.ReadLine();
+        var solution = _solver.Filter(enteredLine, pattern).OrderByDescending(t => t.Value).Take(20);
 
         foreach (var (key, value) in solution) Console.WriteLine($"{key} , {value}");
     }
