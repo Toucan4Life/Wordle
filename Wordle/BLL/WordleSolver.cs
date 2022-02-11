@@ -25,57 +25,44 @@ namespace Wordle
         public IOrderedEnumerable<KeyValuePair<string, float>> Filter(string word, string pattern)
         {
             _searcher.SetWordLenght(pattern.Length);
-            CheckCorrectCharRule(word,pattern);
-            CheckMisPlacedCharRule(word,pattern);
-            CheckNotPresentCharRule(word,pattern);
 
-            return _searcher.Search().OrderByDescending(t=>t.Value);
-        }
-
-        public void CheckCorrectCharRule(string word, string pattern)
-        {
-            
-            for (var i = 0 ; i < pattern.Length ; i++)
-            {
-                if (pattern[i] == '!')
-                    _searcher.AddCharPosToMatch(word[i],i);
-            }
-        }
-
-        public void CheckMisPlacedCharRule(string word, string pattern)
-        {
-            if (pattern.All(t => t != '?'))
-            {
-                return;
-            }
-            for (var i = 0; i < pattern.Length; i++)
-            {
-                if (pattern[i] == '?')
-                {
-                    _searcher.AddAtLeastCharacterCount(word[i], CountOccurenceOfPresentCharacterInWord(word, pattern, i));
-                    _searcher.AddCharPosToNotMatch(word[i], i);
-                }
-
-                i++;
-            }
-
-        }
-        public int CountOccurenceOfPresentCharacterInWord(string word, string pattern, int i)
-        {
-            return word.Where((charInWord, j) => charInWord == word[i] && pattern[j] != '.').Count();
-        }
-
-        public void CheckNotPresentCharRule(string word, string pattern)
-        {
+            var dictionary = new Dictionary<char, List<Tuple<int, char>>>();
 
             for (var i = 0; i < pattern.Length; i++)
             {
-                if (pattern[i] == '.')
+                if (!dictionary.ContainsKey(word[i]))
+                    dictionary.Add(word[i], new List<Tuple<int, char>> {new(i, pattern[i])});
+                else
                 {
-                    _searcher.AddCharacterCount(word[i], CountOccurenceOfPresentCharacterInWord(word, pattern, i));
+                    dictionary[word[i]].Add(new Tuple<int, char>(i, pattern[i]));
                 }
             }
 
+            foreach (var tuple in dictionary)
+            {
+                if (tuple.Value.Select(t => t.Item2).Contains('.'))
+                    _searcher.AddCharacterCount(tuple.Key, tuple.Value.Select(t => t.Item2).Count(t => t != '.'));
+                else if (tuple.Value.Select(t => t.Item2).Contains('?'))
+                {
+                    _searcher.AddAtLeastCharacterCount(tuple.Key,
+                        tuple.Value.Select(t => t.Item2).Count(t => t != '.'));
+
+                    foreach (var triple in tuple.Value.Where(t => t.Item2 == '?'))
+                    {
+                        _searcher.AddCharPosToNotMatch(tuple.Key, triple.Item1);
+                    }
+                }
+                else
+                {
+                    foreach (var triple in tuple.Value.Where(t => t.Item2 == '!'))
+                    {
+                        _searcher.AddCharPosToMatch(tuple.Key, triple.Item1);
+                    }
+                }
+
+            }
+
+            return _searcher.Search().OrderByDescending(t => t.Value);
         }
     }
 }
