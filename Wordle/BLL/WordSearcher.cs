@@ -52,6 +52,11 @@ namespace Wordle.BLL
                 _characterCount[character] = Math.Max(_characterCount[character], count);
             } else
             {
+                if (_characterAtLeastCount.ContainsKey(character))
+                {
+                    _characterAtLeastCount.Remove(character);
+
+                }
                 _characterCount[character] = count;
             }
         }

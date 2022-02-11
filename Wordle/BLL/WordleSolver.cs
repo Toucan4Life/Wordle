@@ -22,47 +22,28 @@ namespace Wordle
             _searcher.Reset();
         }
 
-        public IOrderedEnumerable<KeyValuePair<string, float>> Filter(string word, string pattern)
+        public IEnumerable<KeyValuePair<string, float>> Filter(string word, string pattern)
         {
             _searcher.SetWordLenght(pattern.Length);
 
-            var dictionary = new Dictionary<char, List<Tuple<int, char>>>();
-
-            for (var i = 0; i < pattern.Length; i++)
+            foreach (var tuple in pattern.Select((pat, i) => new { character = word[i], index = i, pat}).GroupBy(t=> t.character))
             {
-                if (!dictionary.ContainsKey(word[i]))
-                    dictionary.Add(word[i], new List<Tuple<int, char>> {new(i, pattern[i])});
+                if (tuple.Any(t => t.pat == '.'))
+                    _searcher.AddCharacterCount(tuple.Key, tuple.Count(t => t.pat != '.'));
+
                 else
                 {
-                    dictionary[word[i]].Add(new Tuple<int, char>(i, pattern[i]));
+                    _searcher.AddAtLeastCharacterCount(tuple.Key, tuple.Count());
+
+                    foreach (var triple in tuple)
+                    {
+                        if (triple.pat == '!') _searcher.AddCharPosToMatch(triple.character, triple.index);
+                        else _searcher.AddCharPosToNotMatch(triple.character, triple.index);
+                    }
                 }
             }
 
-            foreach (var tuple in dictionary)
-            {
-                if (tuple.Value.Select(t => t.Item2).Contains('.'))
-                    _searcher.AddCharacterCount(tuple.Key, tuple.Value.Select(t => t.Item2).Count(t => t != '.'));
-                else if (tuple.Value.Select(t => t.Item2).Contains('?'))
-                {
-                    _searcher.AddAtLeastCharacterCount(tuple.Key,
-                        tuple.Value.Select(t => t.Item2).Count(t => t != '.'));
-
-                    foreach (var triple in tuple.Value.Where(t => t.Item2 == '?'))
-                    {
-                        _searcher.AddCharPosToNotMatch(tuple.Key, triple.Item1);
-                    }
-                }
-                else
-                {
-                    foreach (var triple in tuple.Value.Where(t => t.Item2 == '!'))
-                    {
-                        _searcher.AddCharPosToMatch(tuple.Key, triple.Item1);
-                    }
-                }
-
-            }
-
-            return _searcher.Search().OrderByDescending(t => t.Value);
+            return _searcher.Search();
         }
     }
 }
