@@ -30,9 +30,9 @@ internal class Program
                 var searcher = new WordSearcher(possibleSolution);
                 var _solver = new WordleSolver();
                 possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
-                    .OrderByDescending(t => t.Value).Take(20).ToDictionary(t=>t.Key, t=>t.Value);
+                    .OrderByDescending(t => t.Value).ToDictionary(t=>t.Key, t=>t.Value);
 
-                foreach (var (key, value) in possibleSolution) Console.WriteLine($"{key} , {value}");
+                foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
             }
         }
     }

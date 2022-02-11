@@ -10,10 +10,6 @@ namespace Wordle
 {
     public class WordleSolver
     {
-        public WordleSolver()
-        {
-        }
-
         public List<KeyValuePair<string, float>> Filter(string word, IEnumerable<Pattern> pattern, WordSearcher searcher=null)
         {
             searcher.SetWordLength(pattern.Count());
@@ -53,19 +49,13 @@ namespace Wordle
             var allPossiblePatternCombination = CartesianProduct(word.Select(_ => new List<Pattern>
                 {Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced}));
 
-            double sum = 0;
-           
-            foreach (var pattern in allPossiblePatternCombination)
+            return (float)allPossiblePatternCombination.Select(pattern =>
             {
                 var wordSearcher = new WordSearcher(wordDico);
                 wordSearcher.SetWordLength(word.Length);
                 float totalWord = wordSearcher.Search().Count();
-                var count = Filter(word, pattern, wordSearcher).Count();
-                var t = count / totalWord;
-                sum += t > 0 ? t * Math.Log2(1 / t) : 0;
-            }
-
-            return (float)sum;
+                return Filter(word, pattern, wordSearcher).Count / totalWord;
+            }).Select(t => t > 0 ? t * Math.Log2(1 / t) : 0).Sum();
         }
 
         public IEnumerable<IEnumerable<T>> CartesianProduct<T>(
