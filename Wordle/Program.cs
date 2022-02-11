@@ -28,7 +28,7 @@ internal class Program
                 if (patternString.Length != enteredLine.Length)
                     throw new ArgumentException("Pattern and Word are not same size");
                 var searcher = new WordSearcher(possibleSolution);
-                var _solver = new WordleSolver(possibleSolution);
+                var _solver = new WordleSolver();
                 possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
                     .OrderByDescending(t => t.Value).Take(20).ToDictionary(t=>t.Key, t=>t.Value);
 

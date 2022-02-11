@@ -18,7 +18,7 @@ namespace IntegrationTests
                 new[] { Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced }
             };
 
-            WordleSolver _solver = new(new Dictionary<string, float>());
+            WordleSolver _solver = new();
             var cartesianProduct = _solver.CartesianProduct(items).ToList();
             Assert.AreEqual(3, cartesianProduct.Count);
         }
@@ -31,7 +31,7 @@ namespace IntegrationTests
                 new[] { Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced }
             };
 
-            WordleSolver _solver = new(new Dictionary<string, float>());
+            WordleSolver _solver = new();
             var cartesianProduct = _solver.CartesianProduct(items).ToList();
             Assert.AreEqual(9,cartesianProduct.Count);
         }
@@ -40,11 +40,9 @@ namespace IntegrationTests
         public void EntropyCalculationWhenOnly2Elements()
         {
             var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
-            WordleSolver _solver = new(wordDictionary);
+            WordleSolver _solver = new();
 
-            var wordSearcher = new WordSearcher(wordDictionary);
-
-            var entropy = _solver.CalculateEntropy("abe",wordSearcher);
+            var entropy = _solver.CalculateEntropy("abe", wordDictionary);
             Assert.AreEqual(1, entropy);
         }
 
@@ -52,11 +50,11 @@ namespace IntegrationTests
         public void EntropyCalculationDoesnotAlterSearcherState()
         {
             var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
-            WordleSolver _solver = new(wordDictionary);
+            WordleSolver _solver = new();
 
             var wordSearcher = new WordSearcher(wordDictionary);
             //wordSearcher._wordLength = 0;
-            _solver.CalculateEntropy("abe", wordSearcher);
+            _solver.CalculateEntropy("abe", wordDictionary);
 
             Assert.AreEqual(0, wordSearcher._charPosToMatch.Count);
         }
@@ -65,12 +63,11 @@ namespace IntegrationTests
         public void EntropyCalculationDoesnotAlterSearcherState1()
         {
             var wordDictionary = new Dictionary<string, float> { { "ab", 0 }, { "ac", 0 } };
-            WordleSolver _solver = new(wordDictionary);
-
-            var wordSearcher = new WordSearcher(wordDictionary);
+            WordleSolver _solver = new();
+            
             //wordSearcher._wordLength = 0;
-            var entropy = _solver.CalculateEntropy("ab", wordSearcher);
-            var entropy2 = _solver.CalculateEntropy("ac", wordSearcher);
+            var entropy = _solver.CalculateEntropy("ab", wordDictionary);
+            var entropy2 = _solver.CalculateEntropy("ac", wordDictionary);
 
             Assert.AreEqual(1, entropy);
             Assert.AreEqual(1, entropy2);

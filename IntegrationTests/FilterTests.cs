@@ -26,7 +26,7 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Correct
             };
 
-            WordleSolver _solver = new(new Dictionary<string, float> {{"coucou", 0}});
+            WordleSolver _solver = new();
             Assert.IsTrue(  _solver.Filter("coucou", patterns).Any(t=>t.Key == "coucou"));
         }
 
@@ -45,7 +45,7 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Correct, Pattern.Correct, Pattern.Correct,
                 Pattern.Correct, Pattern.Correct
             };
-            WordleSolver _solver = new(new Dictionary<string, float> {{"coucou", 0}});
+            WordleSolver _solver = new();
             Assert.IsTrue(_solver.Filter("coucou", patterns).Any(t => t.Key == "coucou"));
         }
 
@@ -57,7 +57,7 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect,
                 Pattern.Incorrect, Pattern.Incorrect
             };
-            WordleSolver _solver = new(new Dictionary<string, float> {{"toucan", 0}});
+            WordleSolver _solver = new();
             Assert.AreEqual(0, _solver.Filter("coucou", patterns).Count());
         }
 
@@ -69,7 +69,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Correct, Pattern.Correct, Pattern.Incorrect,
                 Pattern.Incorrect, Pattern.Incorrect
             };
-            WordleSolver _solver = new(new Dictionary<string, float> {{"toucan", 0}, {"coucou", 1}});
+            WordleSolver _solver = new();
             var enumerable = _solver.Filter("boubbb", patterns);
             Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
             Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
@@ -84,7 +84,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Incorrect
             };
             WordleSolver _solver =
-                new(new Dictionary<string, float> { {"toucan", 0}, {"coucou", 1}, {"ehbahnon", 0}, {"couchera", 1}});
+                new();
 
             var enumerable = _solver.Filter("boubbb", patterns);
             Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
@@ -101,7 +101,7 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Misplaced
             };
             WordleSolver _solver =
-                new(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } });
+                new();
 
             var enumerable = _solver.Filter("doucat", patterns);
             Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
@@ -117,7 +117,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Misplaced
             };
             WordleSolver _solver =
-                new(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } });
+                new();
 
             var enumerable = _solver.Filter("coucot", patterns);
             Assert.IsTrue(enumerable.Any(t => t.Key == "toucan"));
@@ -133,7 +133,7 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Incorrect
             };
             WordleSolver _solver =
-                new(new Dictionary<string, float> { { "toucan", 0 }, { "coucou", 1 }, { "ehbahnon", 0 }, { "couchera", 1 } });
+                new();
 
             var enumerable = _solver.Filter("coucot", patterns);
             Assert.IsTrue(enumerable.Any(t => t.Key == "coucou"));
@@ -148,7 +148,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Correct, Pattern.Correct, Pattern.Correct,
                 Pattern.Correct
             };
-            WordleSolver _solver = new(new Dictionary<string, float> { { "vivre", 0 }, { "livre", 0 } , { "givre", 0 } });
+            WordleSolver _solver = new();
             Assert.IsFalse(_solver.Filter("vivre", patterns).Any(t => t.Key == "vivre"));
         }
 
@@ -160,7 +160,7 @@ namespace IntegrationTests
                 Pattern.Misplaced, Pattern.Correct, Pattern.Correct,
                 Pattern.Correct, Pattern.Incorrect
             };
-            WordleSolver _solver = new(new Dictionary<string, float> { { "tivrv", 0 } });
+            WordleSolver _solver = new();
             var response = _solver.Filter("vivre", patterns);
             Assert.IsTrue(response.Any(t => t.Key == "tivrv"));
         }
@@ -172,7 +172,7 @@ namespace IntegrationTests
             {
                 Pattern.Correct, Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect
             };
-            WordleSolver _solver = new(new Dictionary<string, float> { { "eaye", 0 } });
+            WordleSolver _solver = new();
             Assert.IsTrue(_solver.Filter("eeet", patterns).Any(t => t.Key == "eaye"));
         }
 
@@ -186,7 +186,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect,
                 Pattern.Incorrect
             };
-            WordleSolver _solver = new(new Dictionary<string, float> { { "poursuivis", 0 } });
+            WordleSolver _solver = new();
             Assert.IsFalse(_solver.Filter("maintenant", patterns).Any(t => t.Key == "poursuivis"));
         }
 
@@ -200,7 +200,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect,
                 Pattern.Incorrect
             };
-            WordleSolver _solver = new(new Dictionary<string, float> { { "proportion", 0 } });
+            WordleSolver _solver = new();
             Assert.IsTrue(_solver.Filter("maintenant", patterns).Any(t => t.Key == "proportion"));
         }
 
@@ -221,7 +221,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced,
                 Pattern.Incorrect
             };
-            WordleSolver _solver = new(new Dictionary<string, float> { { "maintenant", 0 }, { "exactement", 0 }, { "encourager", 0 } });
+            WordleSolver _solver = new();
             var dictionary = _solver.Filter("maintenant", patterns1);
             var dictionary2 = _solver.Filter("exactement", patterns2);
             Assert.IsTrue(dictionary2.Any(t => t.Key == "encourager"));
@@ -242,7 +242,7 @@ namespace IntegrationTests
                 Pattern.Misplaced, Pattern.Incorrect, Pattern.Misplaced,
                 Pattern.Incorrect, Pattern.Correct
             };
-            WordleSolver _solver = new(new Dictionary<string, float> { { "mauvaise", 0 }, { "aiguille", 0 },  { "habitude", 0 }, { "restaure", 0 } });
+            WordleSolver _solver = new();
             var dictionary = _solver.Filter("restaure", patterns1);
             var dictionary2 = _solver.Filter("habitude", patterns2);
             Assert.IsFalse(dictionary2.Any(t => t.Key == "mauvaise"));
@@ -272,11 +272,31 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Correct, Pattern.Correct,
                 Pattern.Correct, Pattern.Correct
             };
-            WordleSolver _solver = new(new Dictionary<string, float> { { "abdicataire", 0 }, { "litterature", 0 }, { "ventilateur", 0 }, { "realisateur", 0 }, { "utilisateur", 0 } });
+            WordleSolver _solver = new();
             var dictionary = _solver.Filter("abdicataire", patterns1);
             var dictionary2 = _solver.Filter("litterature", patterns2);
             var dictionary3 = _solver.Filter("ventilateur", patterns3);
             Assert.IsFalse(dictionary3.Any(t => t.Key == "realisateur"));
+        }
+
+        [TestMethod]
+        public void RedYellowGreen7()
+        {
+            var patterns1 = new List<Pattern>
+            {
+                Pattern.Misplaced, Pattern.Misplaced, Pattern.Misplaced,
+                Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect
+            };
+            var patterns2 = new List<Pattern>
+            {
+                Pattern.Misplaced, Pattern.Misplaced, Pattern.Misplaced,
+                Pattern.Incorrect, Pattern.Incorrect, Pattern.Correct
+            };
+            var wordDictionary = new Dictionary<string, float> { { "grande", 0 }, { "andain", 0 }, { "dansee", 0 } };
+            WordleSolver _solver = new();
+            var dictionary = _solver.Filter("andain", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t=>t.Key, t=>t.Value);
+            var dictionary2 = _solver.Filter("dansee", patterns2, new WordSearcher(dictionary));
+            Assert.IsTrue(dictionary2.Any(t => t.Key == "grande"));
         }
     }
 }
