@@ -30,9 +30,9 @@ namespace Wordle.BLL
             _wordLength = 0;
         }
 
-        public void SetWordLenght(int lenght)
+        public void SetWordLength(int length)
         {
-            _wordLength = lenght;
+            _wordLength = length;
         }
 
         public void AddCharPosToMatch(char character, int pos)

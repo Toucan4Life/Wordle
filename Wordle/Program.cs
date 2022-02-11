@@ -1,26 +1,50 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Wordle;
+using Wordle.BLL;
 using Wordle.SAL;
 
-var words = new CsvReader().GetAllWords("Lexique381.csv");
-
-var _solver = new WordleSolver(words);
-
-Console.WriteLine("Type a word, Add pattern with +. use \".\" for not in word, ? for misplaced and ! for correct letters.type \"newgame\" to reset game");
-while (true)
+internal class Program
 {
-    var enteredLine = Console.ReadLine();
-    if (enteredLine == "newgame")
+    private static void Main()
     {
-        _solver.Reset();
-        Console.WriteLine("Game has been reset !");
-    }
-    else
-    {
-        var pattern = Console.ReadLine();
-        var solution = _solver.Filter(enteredLine, pattern).OrderByDescending(t => t.Value).Take(20);
+        var words = new CsvReader().GetAllWords("Lexique381.csv");
 
-        foreach (var (key, value) in solution) Console.WriteLine($"{key} , {value}");
+        var _solver = new WordleSolver(words);
+
+        Console.WriteLine(
+            "Type a word, Add pattern with +. use \".\" for not in word, ? for misplaced and ! for correct letters.type \"newgame\" to reset game");
+        while (true)
+        {
+            var enteredLine = Console.ReadLine();
+            if (enteredLine == "newgame")
+            {
+                _solver.Reset();
+                Console.WriteLine("Game has been reset !");
+            }
+            else
+            {
+                var patternString = Console.ReadLine();
+
+                if (patternString.Length != enteredLine.Length)
+                    throw new ArgumentException("Pattern and Word are not same size");
+
+                var solution = _solver.Filter(enteredLine, patternString.Select(MapPattern).ToList())
+                    .OrderByDescending(t => t.Value).Take(20);
+
+                foreach (var (key, value) in solution) Console.WriteLine($"{key} , {value}");
+            }
+        }
+    }
+
+    private static Pattern MapPattern(char c)
+    {
+        return c switch
+        {
+            '0' => Pattern.Incorrect,
+            '1' => Pattern.Misplaced,
+            '2' => Pattern.Correct,
+            _ => throw new ArgumentOutOfRangeException("Pattern not supported")
+        };
     }
 }

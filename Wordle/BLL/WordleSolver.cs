@@ -22,14 +22,14 @@ namespace Wordle
             _searcher.Reset();
         }
 
-        public IEnumerable<KeyValuePair<string, float>> Filter(string word, string pattern)
+        public IEnumerable<KeyValuePair<string, float>> Filter(string word, List<Pattern> pattern)
         {
-            _searcher.SetWordLenght(pattern.Length);
+            _searcher.SetWordLength(pattern.Count);
 
             foreach (var tuple in pattern.Select((pat, i) => new { character = word[i], index = i, pat}).GroupBy(t=> t.character))
             {
-                if (tuple.Any(t => t.pat == '.'))
-                    _searcher.AddCharacterCount(tuple.Key, tuple.Count(t => t.pat != '.'));
+                if (tuple.Any(t => t.pat == Pattern.Incorrect))
+                    _searcher.AddCharacterCount(tuple.Key, tuple.Count(t => t.pat != Pattern.Incorrect));
 
                 else
                 {
@@ -37,7 +37,7 @@ namespace Wordle
 
                     foreach (var triple in tuple)
                     {
-                        if (triple.pat == '!') _searcher.AddCharPosToMatch(triple.character, triple.index);
+                        if (triple.pat == Pattern.Correct) _searcher.AddCharPosToMatch(triple.character, triple.index);
                         else _searcher.AddCharPosToNotMatch(triple.character, triple.index);
                     }
                 }
