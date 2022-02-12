@@ -15,7 +15,7 @@ namespace Wordle.BLL
         public Dictionary<char, int> _characterAtLeastCount = new();
         public Dictionary<int, char> _charPosToMatch = new();
         public List<Tuple<int, char>> _charPosToNotMatch = new();
-        public int _wordLength;
+        public int WordLength { get; set; }
 
         private Dictionary<char, int> _characterCountBackup = new();
         private Dictionary<char, int> _characterAtLeastCountBackup = new();
@@ -34,7 +34,7 @@ namespace Wordle.BLL
             _characterAtLeastCount = new Dictionary<char, int>();
             _charPosToMatch = new Dictionary<int, char>();
             _charPosToNotMatch = new List<Tuple<int, char>>();
-            _wordLength = 0;
+            WordLength = 0;
         }
 
         public void RememberState()
@@ -43,7 +43,7 @@ namespace Wordle.BLL
             _characterAtLeastCountBackup = _characterAtLeastCount.ToDictionary(entry => entry.Key, entry => entry.Value);
             _charPosToMatchBackup = _charPosToMatch.ToDictionary(entry => entry.Key, entry => entry.Value);
             _charPosToNotMatchBackup = new List<Tuple<int, char>>(_charPosToNotMatch);
-            _wordLengthBackup = _wordLength;
+            _wordLengthBackup = WordLength;
         }
         public void RollbackState()
         {
@@ -51,7 +51,7 @@ namespace Wordle.BLL
             _characterAtLeastCount = _characterAtLeastCountBackup.ToDictionary(entry => entry.Key, entry => entry.Value);
             _charPosToMatch = _charPosToMatchBackup.ToDictionary(entry => entry.Key, entry => entry.Value);
             _charPosToNotMatch = new List<Tuple<int, char>>(_charPosToNotMatchBackup);
-            _wordLength = _wordLengthBackup;
+            WordLength = _wordLengthBackup;
             //_characterCountBackup = new();
             //_characterAtLeastCountBackup = new();
             //_charPosToMatchBackup = new();
@@ -61,7 +61,7 @@ namespace Wordle.BLL
 
         public void SetWordLength(int length)
         {
-            _wordLength = length;
+            WordLength = length;
         }
 
         public void AddCharPosToMatch(char character, int pos)
@@ -109,11 +109,10 @@ namespace Wordle.BLL
 
         public bool IsWordConformToRule(string word)
         {
-            return word.Length == _wordLength &&
+            return word.Length == WordLength && _charPosToMatch.All(charpos => word[charpos.Key] == charpos.Value) &&
+                   _charPosToNotMatch.All(charpos => word[charpos.Item1] != charpos.Item2) &&
                    _characterCount.All(t => word.Count(v => v == t.Key) == t.Value) &&
-                   _characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value) &&
-                   _charPosToMatch.All(charpos => word[charpos.Key] == charpos.Value) &&
-                   _charPosToNotMatch.All(charpos => word[charpos.Item1] != charpos.Item2);
+                   _characterAtLeastCount.All(t => word.Count(v => v == t.Key) >= t.Value);
         }
     }
 

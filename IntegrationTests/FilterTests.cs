@@ -302,5 +302,37 @@ namespace IntegrationTests
             var dictionary2 = _solver.Filter("dansee", patterns2, new WordSearcher(dictionary));
             Assert.IsTrue(dictionary2.Any(t => t.Key == "grande"));
         }
+
+        [TestMethod]
+        public void RedYellowGreen8()
+        {
+            var patterns1 = new List<Pattern>
+            {
+                Pattern.Correct, Pattern.Misplaced, Pattern.Incorrect,
+                Pattern.Correct, Pattern.Correct, Pattern.Incorrect
+                ,Pattern.Correct
+            };
+            var wordDictionary = new Dictionary<string, float> { { "usurier", 0 }, { "butoirs", 0 }};
+            WordleSolver _solver = new();
+            var dictionary = _solver.Filter("usurier", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t => t.Key, t => t.Value);
+            Assert.IsFalse(dictionary.Any(t => t.Key == "butoirs"));
+        }
+
+        //[TestMethod]
+        //public void RedYellowGreen9()
+        //{
+        //    //CCIIIMM
+        //    //CCIMIMI
+        //    var patterns1 = new List<Pattern>
+        //    {
+        //        Pattern.Correct, Pattern.Correct, Pattern.Incorrect,
+        //        Pattern.Misplaced, Pattern.Incorrect, Pattern.Misplaced
+        //        ,Pattern.Incorrect
+        //    };
+        //    var wordDictionary = new Dictionary<string, float> { { "usurier", 0 }, { "usagers", 0 } };
+        //    WordleSolver _solver = new();
+        //    var dictionary = _solver.Filter("usurier", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t => t.Key, t => t.Value);
+        //    Assert.IsFalse(dictionary.Any(t => t.Key == "usagers"));
+        //}
     }
 }

@@ -31,7 +31,7 @@ internal class Program
                 var _solver = new WordleSolver();
                 possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
                     .OrderByDescending(t => t.Value).ToDictionary(t=>t.Key, t=>t.Value);
-
+                Console.WriteLine($"# possible solution : {possibleSolution.Count}");
                 foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
             }
         }
