@@ -11,28 +11,53 @@ internal class Program
 
         Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
 
-        Console.WriteLine(
-            "Type a word, Add pattern with +. use \".\" for not in word, ? for misplaced and ! for correct letters.type \"newgame\" to reset game");
+
         while (true)
         {
             var enteredLine = Console.ReadLine();
-            if (enteredLine == "newgame")
+            switch (enteredLine)
             {
-                possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
-                Console.WriteLine("Game has been reset !");
-            }
-            else
-            {
-                var patternString = Console.ReadLine();
+                case "start":
+                {
+                    Console.WriteLine(
+                        "Type a word, Add pattern with +. use \".\" for not in word, ? for misplaced and ! for correct letters.type \"newgame\" to reset game");
 
-                if (patternString.Length != enteredLine.Length)
-                    throw new ArgumentException("Pattern and Word are not same size");
-                var searcher = new WordSearcher(possibleSolution);
-                var _solver = new WordleSolver();
-                possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
-                    .OrderByDescending(t => t.Value).ToDictionary(t=>t.Key, t=>t.Value);
-                Console.WriteLine($"# possible solution : {possibleSolution.Count}");
-                foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
+                    possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
+                    Console.Write("Word Length : ");
+                    var length = int.Parse(Console.ReadLine());
+
+                    var searcher = new WordSearcher(possibleSolution){WordLength = length };
+
+                    Console.Write("First char (can be empty) :");
+
+                    var enteredline = Console.ReadLine();
+
+                    if(!string.IsNullOrWhiteSpace(enteredline)) searcher.AddCharPosToMatch(enteredline[0],0);
+
+                    var result = searcher.Search().ToDictionary(t => t.Key, t => t.Value);
+
+                    var _solver = new WordleSolver();
+
+                    possibleSolution =_solver.FilterWithEntropy(new WordSearcher(result)).OrderByDescending(t => t.Value).ToDictionary(t => t.Key, t => t.Value);
+                    Console.WriteLine($"# possible solution : {possibleSolution.Count}");
+                    foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
+                    break;
+                }
+                default:
+                {
+                    var patternString = Console.ReadLine();
+
+                    if (patternString.Length != enteredLine.Length)
+                        throw new ArgumentException("Pattern and Word are not same size");
+
+                    var searcher = new WordSearcher(possibleSolution);
+                    var _solver = new WordleSolver();
+                    possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
+                        .OrderByDescending(t => t.Value).ToDictionary(t=>t.Key, t=>t.Value);
+                    Console.WriteLine($"# possible solution : {possibleSolution.Count}");
+                    foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
+                    break;
+                }
             }
         }
     }

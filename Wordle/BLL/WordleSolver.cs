@@ -43,7 +43,11 @@ namespace Wordle
             var keyValuePairs = searcher.Search().ToList();
             return keyValuePairs;
         }
-
+        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(WordSearcher wordSearcher)
+        {
+            return wordSearcher._wordDictionary.AsParallel().Select(keyValuePair =>
+                new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordSearcher._wordDictionary))).ToList();
+        }
         public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(string word, IEnumerable<Pattern> pattern,
             WordSearcher wordSearcher)
         {
