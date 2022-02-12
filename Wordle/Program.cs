@@ -9,7 +9,7 @@ internal class Program
     private static void Main()
     {
 
-        Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
+        Dictionary<string, float> possibleSolution = new Dictionary<string, float>();
 
 
         while (true)
