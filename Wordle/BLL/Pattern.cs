@@ -12,4 +12,19 @@ namespace Wordle.BLL
         Misplaced = 1,
         Correct = 2,
     }
+    public class ListEqualityComparer<Pattern> : IEqualityComparer<List<Pattern>>
+    {
+        public bool Equals(List<Pattern> lhs, List<Pattern> rhs)
+        {
+            return lhs.SequenceEqual(rhs);
+        }
+
+        public int GetHashCode(List<Pattern> list)
+        {
+            unchecked
+            {
+                return list.Aggregate(23, (current, item) => current * 31 + (item == null ? 0 : item.GetHashCode()));
+            }
+        }
+    }
 }

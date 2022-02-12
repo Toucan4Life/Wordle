@@ -12,31 +12,6 @@ namespace IntegrationTests
     {
 
         [TestMethod]
-        public void CartesianProductWith1D()
-        {
-            Pattern[][] items = {
-                new[] { Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced }
-            };
-
-            WordleSolver _solver = new();
-            var cartesianProduct = _solver.CartesianProduct(items).ToList();
-            Assert.AreEqual(3, cartesianProduct.Count);
-        }
-
-        [TestMethod]
-        public void CartesianProductWith2D()
-        {
-            Pattern[][] items = {
-                new[] { Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced },
-                new[] { Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced }
-            };
-
-            WordleSolver _solver = new();
-            var cartesianProduct = _solver.CartesianProduct(items).ToList();
-            Assert.AreEqual(9,cartesianProduct.Count);
-        }
-
-        [TestMethod]
         public void EntropyCalculationWhenOnly2Elements()
         {
             var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
@@ -71,6 +46,16 @@ namespace IntegrationTests
 
             Assert.AreEqual(1, entropy);
             Assert.AreEqual(1, entropy2);
+        }
+
+        [TestMethod]
+        public void EntropyCalculationDoesnotAlterSearcherState2()
+        {
+            var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
+            WordleSolver _solver = new();
+
+            var entropy = _solver.CalculateEntropy("abe", wordDictionary);
+            Assert.AreEqual(1, entropy);
         }
     }
 }

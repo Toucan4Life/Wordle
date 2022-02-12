@@ -29,7 +29,7 @@ namespace IntegrationTests
                 .Where(t => t.Key.Length == 7).ToDictionary(t => t.Key, t => t.Value);
             var _solver = new WordleSolver();
             var result = _solver.CalculateEntropy("feuille", possibleSolution);
-            Assert.IsTrue(result< Math.Log2(Math.Pow(3, 7)));
+            Assert.IsTrue(Math.Abs(result - 6.908886) < 0.000001);
         }
         [TestMethod]
         public void CalculateEntropy()

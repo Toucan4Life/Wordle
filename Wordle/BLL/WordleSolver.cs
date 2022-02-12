@@ -52,63 +52,48 @@ namespace Wordle
             return result.AsParallel().Select(keyValuePair => new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, result))).ToList();
         }
 
-        public float CalculateEntropy(string word, Dictionary<string,float> wordDico)
-        {
+        public float CalculateEntropy(string actualWord, Dictionary<string, float> wordDico)
+        { 
+            var patternsList = wordDico.Select(word => GetPattern(actualWord, word.Key)).ToList();
 
-            var allPossiblePatternCombination = CartesianProduct(word.Select(_ => new List<Pattern>
-                {Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced})).Where(pat => IsAllowedPattern(word, pat)); ;
-            int i=0;
-            var testDictionarry = new Dictionary<string, float>();
-            float totalWord = wordDico.Count(t => t.Key.Length == word.Length);
-            var enumerable = allPossiblePatternCombination.Select(pattern =>
-            {
-                
-                i++;
-                var wordSearcher = new WordSearcher(wordDico);
-                wordSearcher.SetWordLength(word.Length);
-                var keyValuePairs = Filter(word, pattern, wordSearcher);
-                keyValuePairs.ForEach(t=> testDictionarry.Add(t.Key,t.Value));
-                var count = keyValuePairs.Count;
-                return count / totalWord;
-            }).OrderByDescending(t=>t).ToList();
+            var test = patternsList.GroupBy(t => t, new ListEqualityComparer<Pattern>())
+                .Select(t => (float) t.Count() / wordDico.Count).OrderByDescending(t=>t);
 
-            if (Math.Abs(enumerable.Sum() - 1) > 0.00001)
-            {
-                throw new Exception();
-            }
-
-            var sum = (float)enumerable.Select(t => t > 0 ? t * Math.Log2(1 / t) : 0).Sum();
-   
+            var sum = (float) test.Select(t => t * Math.Log2(1 / t)).Sum();
 
             return sum;
         }
-        private bool IsAllowedPattern(string word, IEnumerable<Pattern> pattern)
-        {
-            //RIER
-            //MXXI Allowed
-            //IXXM Not Allowed
-            //=> For the same letters, the I pattern should always be last
-            var test = pattern.Select((pat, i) => new { character = word[i], index = i, pat }).GroupBy(t => t.character);
 
-            bool any = test
-                .Where(tuple =>
-                    tuple.Any(t => t.pat == Pattern.Misplaced) &&
-                    tuple.Any(t => t.pat == Pattern.Incorrect)).Any(tuple =>
-                    tuple.Where(t => t.pat == Pattern.Misplaced).Max(t => t.index) >
-                    tuple.Where(t => t.pat == Pattern.Incorrect).Min(t => t.index));
-
-            return !any;
-        }
-        public IEnumerable<IEnumerable<T>> CartesianProduct<T>(
-            IEnumerable<IEnumerable<T>> sequences)
+        public List<Pattern> GetPattern(string actualWord, string targetWord)
         {
-            IEnumerable<IEnumerable<T>> emptyProduct = new[] { Enumerable.Empty<T>() };
-            return sequences.Aggregate(
-                emptyProduct,
-                (accumulator, sequence) =>
-                    from accseq in accumulator
-                    from item in sequence
-                    select accseq.Concat(new[] { item }));
+            var patternList = new Pattern[actualWord.Length].ToList();
+
+            for (var k = 0; k < actualWord.Length; k++)
+            {
+                if (targetWord[k] == actualWord[k])
+                {
+                    patternList[k] = Pattern.Correct;
+                }
+            }
+
+            foreach (var tuple in actualWord.Select((charac, i) => new {character = charac, index = i})
+                         .GroupBy(t => t.character))
+            {
+                var count = Math.Min(targetWord.Count(t => tuple.Key == t), tuple.Count()) -
+                            tuple.Count(t => patternList[t.index] == Pattern.Correct);
+
+                for (int j = 0; j < count; j++)
+                {
+                    if (patternList[tuple.ElementAt(j).index] == Pattern.Correct)
+                    {
+                        count++;
+                        continue;
+                    }
+                    patternList[tuple.ElementAt(j).index] =  Pattern.Misplaced;
+                }
+            }
+
+            return patternList.ToList();
         }
     }
 }
