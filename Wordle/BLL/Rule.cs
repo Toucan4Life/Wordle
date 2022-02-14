@@ -2,20 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Wordle.BLL;
 
-namespace Wordle
+namespace Wordle.BLL
 {
-    public class WordleSolver
+    public class Rule
     {
         public List<KeyValuePair<string, float>> Filter(string word, IEnumerable<Pattern> pattern, WordSearcher searcher)
         {
             searcher.SetWordLength(pattern.Count());
 
-            foreach (var tuple in pattern.Select((pat, i) => new { character = word[i], index = i, pat}).GroupBy(t=> t.character))
+            foreach (var tuple in pattern.Select((pat, i) => new { character = word[i], index = i, pat }).GroupBy(t => t.character))
             {
                 if (tuple.Any(t => t.pat == Pattern.Incorrect))
                     searcher.AddCharacterCount(tuple.Key, tuple.Count(t => t.pat != Pattern.Incorrect));
@@ -43,30 +40,8 @@ namespace Wordle
             var keyValuePairs = searcher.Search().ToList();
             return keyValuePairs;
         }
-        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(WordSearcher wordSearcher)
-        {
-            return wordSearcher._wordDictionary.AsParallel().Select(keyValuePair =>
-                new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordSearcher._wordDictionary))).ToList();
-        }
-        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(string word, IEnumerable<Pattern> pattern,
-            WordSearcher wordSearcher)
-        {
-            var result = Filter(word, pattern, wordSearcher).ToDictionary(t=>t.Key, t=>t.Value);
-            
-            return result.AsParallel().Select(keyValuePair => new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, result))).ToList();
-        }
 
-        public float CalculateEntropy(string actualWord, Dictionary<string, float> wordDico)
-        { 
-            var patternsList = wordDico.Select(word => GetPattern(actualWord, word.Key)).ToList();
 
-            var test = patternsList.GroupBy(t => t, new ListEqualityComparer<Pattern>())
-                .Select(t => (float) t.Count() / wordDico.Count).OrderByDescending(t=>t);
-
-            var sum = (float) test.Select(t => t * Math.Log2(1 / t)).Sum();
-
-            return sum;
-        }
 
         public List<Pattern> GetPattern(string actualWord, string targetWord)
         {
@@ -80,7 +55,7 @@ namespace Wordle
                 }
             }
 
-            foreach (var tuple in actualWord.Select((charac, i) => new {character = charac, index = i})
+            foreach (var tuple in actualWord.Select((charac, i) => new { character = charac, index = i })
                          .GroupBy(t => t.character))
             {
                 var count = Math.Min(targetWord.Count(t => tuple.Key == t), tuple.Count()) -
@@ -93,11 +68,26 @@ namespace Wordle
                         count++;
                         continue;
                     }
-                    patternList[tuple.ElementAt(j).index] =  Pattern.Misplaced;
+                    patternList[tuple.ElementAt(j).index] = Pattern.Misplaced;
                 }
             }
 
             return patternList.ToList();
+        }
+
+        private bool IsAllowedPattern(string word, IEnumerable<Pattern> pattern)
+        {
+            //RIER
+            //MXXI Allowed
+            //IXXM Not Allowed
+            //=> For the same letters, the I pattern should always be last
+
+            return !pattern.Select((pat, i) => new { character = word[i], index = i, pat }).GroupBy(t => t.character)
+                .Where(tuple =>
+                    tuple.Any(t => t.pat == Pattern.Misplaced) &&
+                    tuple.Any(t => t.pat == Pattern.Incorrect)).Any(tuple =>
+                    tuple.Where(t => t.pat == Pattern.Misplaced).Max(t => t.index) >
+                    tuple.Where(t => t.pat == Pattern.Incorrect).Min(t => t.index));
         }
     }
 }

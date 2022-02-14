@@ -36,7 +36,7 @@ internal class Program
 
                     var result = searcher.Search().ToDictionary(t => t.Key, t => t.Value);
 
-                    var _solver = new WordleSolver();
+                    var _solver = new Solver();
 
                     possibleSolution =_solver.FilterWithEntropy(new WordSearcher(result)).OrderByDescending(t => t.Value).ToDictionary(t => t.Key, t => t.Value);
                     Console.WriteLine($"# possible solution : {possibleSolution.Count}");
@@ -51,7 +51,7 @@ internal class Program
                         throw new ArgumentException("Pattern and Word are not same size");
 
                     var searcher = new WordSearcher(possibleSolution);
-                    var _solver = new WordleSolver();
+                    var _solver = new Solver();
                     possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
                         .OrderByDescending(t => t.Value).ToDictionary(t=>t.Key, t=>t.Value);
                     Console.WriteLine($"# possible solution : {possibleSolution.Count}");

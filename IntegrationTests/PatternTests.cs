@@ -15,7 +15,7 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests()
         {
-            var _solver = new WordleSolver();
+            var _solver = new Rule();
             var result =_solver.GetPattern("usurier","usagers");
             var expected = new List<Pattern>
             {
@@ -28,7 +28,7 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests3()
         {
-            var _solver = new WordleSolver();
+            var _solver = new Rule();
             var result = _solver.GetPattern("usagers", "usurier");
             var expected = new List<Pattern>
             {
@@ -41,7 +41,7 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests4()
         {
-            var _solver = new WordleSolver();
+            var _solver = new Rule();
             var result = _solver.GetPattern("abregee", "feuille");
             var expected = new List<Pattern>
             {
@@ -54,7 +54,7 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests5()
         {
-            var _solver = new WordleSolver();
+            var _solver = new Rule();
             var result = _solver.GetPattern("aeriens", "feuille");
             var expected = new List<Pattern>
             {
@@ -67,7 +67,7 @@ namespace IntegrationTests
         [TestMethod]
         public void EachPatternFoundIsSearchableBySameRuleSet()
         {
-            var _solver = new WordleSolver();
+            var _solver = new Rule();
             var targetWord = "feuille";
             var actualWord = "aeriens";
 
@@ -86,7 +86,7 @@ namespace IntegrationTests
         [TestMethod]
         public void EachPatternFoundIsSearchableBySameRuleSet2()
         {
-            var _solver = new WordleSolver();
+            var _solver = new Rule();
             var targetWord = "feuille";
 
             var possibleSolution = new CsvReader().GetAllWords("Lexique381.csv")

@@ -15,7 +15,7 @@ namespace IntegrationTests
         public void EntropyCalculationWhenOnly2Elements()
         {
             var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
-            WordleSolver _solver = new();
+            Solver _solver = new();
 
             var entropy = _solver.CalculateEntropy("abe", wordDictionary);
             Assert.AreEqual(1, entropy);
@@ -25,7 +25,7 @@ namespace IntegrationTests
         public void EntropyCalculationDoesnotAlterSearcherState()
         {
             var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
-            WordleSolver _solver = new();
+            Solver _solver = new();
 
             var wordSearcher = new WordSearcher(wordDictionary);
             //wordSearcher._wordLength = 0;
@@ -38,7 +38,7 @@ namespace IntegrationTests
         public void EntropyCalculationDoesnotAlterSearcherState1()
         {
             var wordDictionary = new Dictionary<string, float> { { "ab", 0 }, { "ac", 0 } };
-            WordleSolver _solver = new();
+            Solver _solver = new();
             
             //wordSearcher._wordLength = 0;
             var entropy = _solver.CalculateEntropy("ab", wordDictionary);
@@ -52,7 +52,7 @@ namespace IntegrationTests
         public void EntropyCalculationDoesnotAlterSearcherState2()
         {
             var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
-            WordleSolver _solver = new();
+            Solver _solver = new();
 
             var entropy = _solver.CalculateEntropy("abe", wordDictionary);
             Assert.AreEqual(1, entropy);
