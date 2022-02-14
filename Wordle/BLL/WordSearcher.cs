@@ -9,12 +9,12 @@ namespace Wordle.BLL
 {
     public class WordSearcher
     {
-        public Dictionary<string, float> _wordDictionary;
+        private readonly Dictionary<string, float> _wordDictionary;
+        private readonly Dictionary<char, int> _characterCount = new();
+        private readonly Dictionary<char, int> _characterAtLeastCount = new();
+        private readonly Dictionary<int, char> _charPosToMatch = new();
+        private readonly List<Tuple<int, char>> _charPosToNotMatch = new();
 
-        public Dictionary<char, int> _characterCount = new();
-        public Dictionary<char, int> _characterAtLeastCount = new();
-        public Dictionary<int, char> _charPosToMatch = new();
-        public List<Tuple<int, char>> _charPosToNotMatch = new();
         public int WordLength { get; set; }
 
         public WordSearcher(Dictionary<string, float> wordDictionary)
