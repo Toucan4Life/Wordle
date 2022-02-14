@@ -47,7 +47,7 @@ namespace Wordle.BLL
             }
 
             foreach (var tuple in actualWord.Select((charac, i) => new { character = charac, index = i })
-                         .GroupBy(t => t.character))
+                         .GroupBy(t => t.character).ToList())
             {
                 var count = Math.Min(targetWord.Count(t => tuple.Key == t), tuple.Count()) -
                             tuple.Count(t => patternList[t.index] == Pattern.Correct);

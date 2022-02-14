@@ -9,7 +9,7 @@ internal class Program
     private static void Main()
     {
 
-        Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
+        IEnumerable<KeyValuePair<string, float>> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
 
 
         while (true)
@@ -37,9 +37,9 @@ internal class Program
                     possibleSolution = _solver
                         .FilterWithEntropy(length, possibleSolution,
                             string.IsNullOrWhiteSpace(enteredline) ? char.MinValue : enteredline[0])
-                        .OrderByDescending(t => t.Value).ToDictionary(t => t.Key, t => t.Value);
+                        .OrderByDescending(t => t.Value);
 
-                    Console.WriteLine($"# possible solution : {possibleSolution.Count}");
+                    Console.WriteLine($"# possible solution : {possibleSolution.Count()}");
                     foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
                     break;
                 }
@@ -56,9 +56,9 @@ internal class Program
                     var _solver = new Solver();
 
                     possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
-                        .OrderByDescending(t => t.Value).ToDictionary(t=>t.Key, t=>t.Value);
+                        .OrderByDescending(t => t.Value);
 
-                    Console.WriteLine($"# possible solution : {possibleSolution.Count}");
+                    Console.WriteLine($"# possible solution : {possibleSolution.Count()}");
                     foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
                     break;
                 }

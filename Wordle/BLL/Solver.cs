@@ -11,33 +11,33 @@ namespace Wordle
 {
     public class Solver
     {
-        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(int length, Dictionary<string, float> wordDico, char firstCharacter = char.MinValue)
+        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(int length, IEnumerable<KeyValuePair<string, float>> wordDico, char firstCharacter = char.MinValue)
         {
             var wordSearcher = new WordSearcher(wordDico) {WordLength = length};
 
             if (firstCharacter != char.MinValue)
                 wordSearcher.AddCharPosToMatch(firstCharacter,0);
             
-            return GetEntropy(wordSearcher.Search().ToDictionary(t => t.Key, t => t.Value));
+            return GetEntropy(wordSearcher.Search());
         }
 
         public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(string word, IEnumerable<Pattern> pattern,
             WordSearcher wordSearcher)
         {
-            return GetEntropy(new Rule().Filter(word, pattern, wordSearcher).ToDictionary(t => t.Key, t => t.Value));
+            return GetEntropy(new Rule().Filter(word, pattern, wordSearcher));
         }
 
-        public IEnumerable<KeyValuePair<string, float>> GetEntropy(Dictionary<string, float> wordDico)
+        public IEnumerable<KeyValuePair<string, float>> GetEntropy(IEnumerable<KeyValuePair<string, float>> wordDico)
         {
             return wordDico.AsParallel().Select(keyValuePair =>
                 new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordDico)));
         }
 
-        public float CalculateEntropy(string actualWord, Dictionary<string, float> wordDico)
+        public float CalculateEntropy(string actualWord, IEnumerable<KeyValuePair<string, float>> wordDico)
         {
             return (float) wordDico.Select(word => new Rule().GetPattern(actualWord, word.Key))
                 .GroupBy(t => t, new ListEqualityComparer<Pattern>())
-                .Select(t => (float) t.Count() / wordDico.Count * Math.Log2(wordDico.Count / (float) t.Count())).Sum();
+                .Select(t => (float) t.Count() / wordDico.Count() * Math.Log2(wordDico.Count() / (float) t.Count())).Sum();
         }
     }
 }

@@ -242,8 +242,7 @@ namespace IntegrationTests
                 {"utilisateur", 0}
             };
 
-            var dictionary3 = _solver.Filter("ventilateur", patterns3, new WordSearcher(wordDictionary))
-                .ToDictionary(t => t.Key, t => t.Value);
+            var dictionary3 = _solver.Filter("ventilateur", patterns3, new WordSearcher(wordDictionary));
 
             Assert.IsFalse(dictionary3.Any(t => t.Key == "realisateur"));
         }
@@ -273,7 +272,7 @@ namespace IntegrationTests
             };
             var wordDictionary = new Dictionary<string, float> { { "usurier", 0 }, { "butoirs", 0 }};
             Rule _solver = new();
-            var dictionary = _solver.Filter("usurier", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t => t.Key, t => t.Value);
+            var dictionary = _solver.Filter("usurier", patterns1, new WordSearcher(wordDictionary));
             Assert.IsFalse(dictionary.Any(t => t.Key == "butoirs"));
         }
 
@@ -289,7 +288,7 @@ namespace IntegrationTests
             var wordDictionary = new Dictionary<string, float> { { "abaisse", 0 }, { "feuille", 0 } };
 
             Rule _solver = new();
-            var dictionary = _solver.Filter("abaisse", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t => t.Key, t => t.Value);
+            var dictionary = _solver.Filter("abaisse", patterns1, new WordSearcher(wordDictionary));
 
             Assert.IsTrue(dictionary.Any(t => t.Key == "feuille"));
         }

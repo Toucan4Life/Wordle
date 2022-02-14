@@ -9,7 +9,7 @@ namespace Wordle.BLL
 {
     public class WordSearcher
     {
-        private readonly Dictionary<string, float> _wordDictionary;
+        private readonly IEnumerable<KeyValuePair<string, float>> _wordDictionary;
         private readonly Dictionary<char, int> _characterCount = new();
         private readonly Dictionary<char, int> _characterAtLeastCount = new();
         private readonly Dictionary<int, char> _charPosToMatch = new();
@@ -17,7 +17,7 @@ namespace Wordle.BLL
 
         public int WordLength { get; set; }
 
-        public WordSearcher(Dictionary<string, float> wordDictionary)
+        public WordSearcher(IEnumerable<KeyValuePair<string, float>> wordDictionary)
         {
             _wordDictionary = wordDictionary;
         }
@@ -67,7 +67,7 @@ namespace Wordle.BLL
 
         public IEnumerable<KeyValuePair<string, float>> Search()
         {
-            return _wordDictionary.Where(word=>IsWordConformToRule(word.Key));
+            return _wordDictionary.Where(word=>IsWordConformToRule(word.Key)).ToList();
         }
 
         public bool IsWordConformToRule(string word)
