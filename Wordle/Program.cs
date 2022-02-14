@@ -9,7 +9,7 @@ internal class Program
     private static void Main()
     {
 
-        Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
+        Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
 
 
         while (true)
@@ -22,7 +22,7 @@ internal class Program
                     Console.WriteLine(
                         "Type a word, Add pattern with +. use \".\" for not in word, ? for misplaced and ! for correct letters.type \"newgame\" to reset game");
 
-                    possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
+                    possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
 
                     Console.Write("Word Length : ");
 
