@@ -40,7 +40,7 @@ namespace IntegrationTests
         {
             Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
             var _solver = new Solver();
-            var result = _solver.FilterWithEntropy(4, possibleSolution).ToList();
+            var result = _solver.FilterWithEntropy(new WordSearcher(possibleSolution){WordLength = 4}).ToList();
             Assert.IsNotNull(result);
         }
 
@@ -59,7 +59,7 @@ namespace IntegrationTests
                 .Where(t => t.Key.Length == 7);
 
             var result = _solver.Filter(actualWord, _solver.GetPattern(actualWord, targetWord),
-                new WordSearcher(possibleSolution) { WordLength = actualWord.Length }).Select(t => t.Key);
+                new WordSearcher(possibleSolution) { WordLength = actualWord.Length }).Search().Select(t => t.Key);
 
             Assert.IsTrue(result.Contains(targetWord));
         }
@@ -75,7 +75,7 @@ namespace IntegrationTests
 
             foreach (var result in possibleSolution.AsParallel().Select(key =>
                          solver.Filter(key.Key, solver.GetPattern(key.Key, targetWord),
-                             new WordSearcher(possibleSolution) {WordLength = targetWord.Length}).Select(t => t.Key)))
+                             new WordSearcher(possibleSolution) {WordLength = targetWord.Length}).Search().Select(t => t.Key)))
             {
                 Assert.IsTrue(result.Contains(targetWord));
             }

@@ -11,25 +11,25 @@ namespace Wordle
 {
     public class Solver
     {
-        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(int length, IEnumerable<KeyValuePair<string, float>> wordDico, char firstCharacter = char.MinValue)
+        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(WordSearcher wordSearcher)
         {
-            var wordSearcher = new WordSearcher(wordDico) {WordLength = length};
-
-            if (firstCharacter != char.MinValue)
-                wordSearcher.AddCharPosToMatch(firstCharacter,0);
-            
-            return GetEntropy(wordSearcher.Search());
+            return GetEntropy(wordSearcher);
         }
 
-        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(string word, IEnumerable<Pattern> pattern,
-            WordSearcher wordSearcher)
+        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(string word, IEnumerable<Pattern> pattern, WordSearcher wordSearcher)
         {
             return GetEntropy(new Rule().Filter(word, pattern, wordSearcher));
         }
 
-        public IEnumerable<KeyValuePair<string, float>> GetEntropy(IEnumerable<KeyValuePair<string, float>> wordDico)
+        public IEnumerable<KeyValuePair<string, float>> GetEntropy(WordSearcher wordSearcher)
         {
-            return wordDico.AsParallel().Select(keyValuePair =>
+            var wordDico = wordSearcher.Search();
+            if (wordDico.Count()==1)
+            {
+                return new KeyValuePair<string, float>[]{new(wordDico.Single().Key,0)};
+            }
+            var wordSearcherWordDictionary = wordSearcher.WordDictionary.Where(t=>t.Key.Length==wordSearcher.WordLength);
+            return wordSearcherWordDictionary.AsParallel().Select(keyValuePair =>
                 new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordDico)));
         }
 

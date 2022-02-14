@@ -10,6 +10,7 @@ internal class Program
     {
 
         IEnumerable<KeyValuePair<string, float>> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
+        WordSearcher wordSearcher = new WordSearcher(possibleSolution);
 
 
         while (true)
@@ -22,25 +23,25 @@ internal class Program
                     Console.WriteLine(
                         "Type a word, Add pattern with +. use \".\" for not in word, ? for misplaced and ! for correct letters.type \"newgame\" to reset game");
 
-                    possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
-
-                    Console.Write("Word Length : ");
+                    wordSearcher = new WordSearcher(new CsvReader().GetAllWords("SAL/Lexique381.csv")); 
+                    
+                        Console.Write("Word Length : ");
 
                     var length = int.Parse(Console.ReadLine());
+
+                    wordSearcher.WordLength = length;
 
                     Console.Write("First char (can be empty) :");
 
                     var enteredline = Console.ReadLine();
+                        
+                    if (!string.IsNullOrWhiteSpace(enteredline))
+                        wordSearcher.AddCharPosToMatch(enteredline[0], 0);
 
-                    var _solver = new Solver();
+                    possibleSolution = new Solver().FilterWithEntropy(wordSearcher);
 
-                    possibleSolution = _solver
-                        .FilterWithEntropy(length, possibleSolution,
-                            string.IsNullOrWhiteSpace(enteredline) ? char.MinValue : enteredline[0])
-                        .OrderByDescending(t => t.Value);
-
-                    Console.WriteLine($"# possible solution : {possibleSolution.Count()}");
-                    foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
+                    Console.WriteLine($"# possible solution : {wordSearcher.Search().Count()}");
+                    foreach (var (key, value) in possibleSolution.OrderByDescending(t => t.Value).Take(20)) Console.WriteLine($"{key} , {value}");
                     break;
                 }
                 default:
@@ -50,15 +51,13 @@ internal class Program
 
                     if (patternString.Length != enteredLine.Length)
                         throw new ArgumentException("Pattern and Word are not same size");
-
-                    var searcher = new WordSearcher(possibleSolution);
-
+                    
                     var _solver = new Solver();
 
-                    possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), searcher)
+                    possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), wordSearcher)
                         .OrderByDescending(t => t.Value);
 
-                    Console.WriteLine($"# possible solution : {possibleSolution.Count()}");
+                    Console.WriteLine($"# possible solution : {wordSearcher.Search().Count()}");
                     foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
                     break;
                 }
