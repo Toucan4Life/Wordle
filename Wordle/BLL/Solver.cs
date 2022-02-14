@@ -11,19 +11,31 @@ namespace Wordle
 {
     public class Solver
     {
-
-        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(WordSearcher wordSearcher)
+        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(int length, Dictionary<string, float> wordDico, char firstCharacter = char.MinValue)
         {
-            return wordSearcher._wordDictionary.AsParallel().Select(keyValuePair =>
-                new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordSearcher._wordDictionary))).ToList();
+            var wordSearcher = new WordSearcher(wordDico) {WordLength = length};
+
+            if (firstCharacter!=char.MinValue)
+                wordSearcher.AddCharPosToMatch(firstCharacter,0);
+
+            var dictionary = wordSearcher.Search().ToDictionary(t => t.Key, t => t.Value);
+
+            return GetEntropy(dictionary);
         }
+
         public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(string word, IEnumerable<Pattern> pattern,
             WordSearcher wordSearcher)
         {
-            var rule = new Rule();
-            var result = rule.Filter(word, pattern, wordSearcher).ToDictionary(t=>t.Key, t=>t.Value);
+            var result = new Rule().Filter(word, pattern, wordSearcher).ToDictionary(t=>t.Key, t=>t.Value);
             
-            return result.AsParallel().Select(keyValuePair => new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, result))).ToList();
+            return GetEntropy(result);
+        }
+
+        public IEnumerable<KeyValuePair<string, float>> GetEntropy(Dictionary<string, float> wordDico)
+        {
+            return wordDico.AsParallel().Select(keyValuePair =>
+                    new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordDico)))
+                .ToList();
         }
 
         public float CalculateEntropy(string actualWord, Dictionary<string, float> wordDico)

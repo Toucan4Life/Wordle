@@ -11,6 +11,9 @@ namespace IntegrationTests
     [TestClass]
     public class IntegrationTests
     {
+        #region Solver
+
+        
 
         [TestMethod]
         public void StressTests()
@@ -37,9 +40,46 @@ namespace IntegrationTests
         {
             Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("Lexique381.csv");
             var _solver = new Solver();
-            var result = _solver.FilterWithEntropy(new WordSearcher(possibleSolution.Where(t=>t.Key.Length==4).ToDictionary(t=>t.Key, t=>t.Value)) );
+            var result = _solver.FilterWithEntropy(4, possibleSolution);
             Assert.IsNotNull(result);
         }
+
+        #endregion
+
+        #region Rule
+
+        [TestMethod]
+        public void EachPatternFoundIsSearchableBySameRuleSet()
+        {
+            var targetWord = "feuille";
+            var actualWord = "aeriens";
+
+            var _solver = new Rule();
+            var possibleSolution = new CsvReader().GetAllWords("Lexique381.csv")
+                .Where(t => t.Key.Length == 7).ToDictionary(t => t.Key, t => t.Value);
+
+            var result = _solver.Filter(actualWord, _solver.GetPattern(actualWord, targetWord),
+                new WordSearcher(possibleSolution) { WordLength = actualWord.Length }).Select(t => t.Key);
+
+            Assert.IsTrue(result.Contains(targetWord));
+        }
+
+        [TestMethod]
+        public void EachPatternFoundIsSearchableBySameRuleSet2()
+        {
+            const string targetWord = "feuille";
+
+            var solver = new Rule();
+            var possibleSolution = new CsvReader().GetAllWords("Lexique381.csv")
+                .Where(t => t.Key.Length == targetWord.Length).ToDictionary(t => t.Key, t => t.Value);
+
+            foreach (var result in from string key in possibleSolution.Keys
+                     select solver.Filter(key, solver.GetPattern(key, targetWord),
+                         new WordSearcher(possibleSolution) { WordLength = targetWord.Length }).Select(t => t.Key))
+                Assert.IsTrue(result.Contains(targetWord));
+        }
+
+        #endregion
 
 
 
