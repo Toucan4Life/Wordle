@@ -276,5 +276,22 @@ namespace IntegrationTests
             var dictionary = _solver.Filter("usurier", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t => t.Key, t => t.Value);
             Assert.IsFalse(dictionary.Any(t => t.Key == "butoirs"));
         }
+
+
+        [TestMethod]
+        public void StressTests6()
+        {
+            var patterns1 = new List<Pattern>
+            {
+                Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect, Pattern.Correct, Pattern.Incorrect,
+                Pattern.Incorrect, Pattern.Correct
+            };
+            var wordDictionary = new Dictionary<string, float> { { "abaisse", 0 }, { "feuille", 0 } };
+
+            Rule _solver = new();
+            var dictionary = _solver.Filter("abaisse", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t => t.Key, t => t.Value);
+
+            Assert.IsTrue(dictionary.Any(t => t.Key == "feuille"));
+        }
     }
 }
