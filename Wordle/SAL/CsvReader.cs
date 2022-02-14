@@ -20,28 +20,27 @@ namespace Wordle.SAL
 
             while (!reader.EndOfStream)
             {
-                wordsFreq = ParseLine(reader.ReadLine(), wordsFreq);
-               
+                ParseLine(reader.ReadLine(), wordsFreq);
             }
 
             return wordsFreq;
         }
 
-        public Dictionary<string, float>  ParseLine(string? line, Dictionary<string, float> wordsFreq)
+        public void ParseLine(string? line, Dictionary<string, float> wordsFreq)
         {
-            if(string.IsNullOrWhiteSpace(line) || line.Contains(' ') || line.Contains('-')) return wordsFreq;
             var values = line.Split(';');
-            if (wordsFreq.ContainsKey(values[0].Transliterate())) wordsFreq[values[0].Transliterate()] = AddTwoStrings(wordsFreq[values[0].Transliterate()], values[1]);
+
+            var transliterate = values[0].Transliterate();
+
+            if (transliterate.Any(t => !char.IsLetter(t))) return;
+
+            if (wordsFreq.ContainsKey(transliterate)) wordsFreq[transliterate] = AddFrequency(wordsFreq[transliterate], values[1]);
 
             else
-            {
-                var key = float.Parse(values[1], CultureInfo.InvariantCulture);
-                wordsFreq.Add(values[0].Transliterate(), key);
-            }
-            return wordsFreq;
+                wordsFreq.Add(transliterate, float.Parse(values[1], CultureInfo.InvariantCulture));
         }
 
-        private float AddTwoStrings(float one, string two)
+        private float AddFrequency(float one, string two)
         {
             var key = float.Parse(two, CultureInfo.InvariantCulture);
             return one + key;

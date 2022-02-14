@@ -13,31 +13,13 @@ namespace IntegrationTests
     public class CsvReaderTests
     {
         [TestMethod]
-        public void DoesNotAddDataWhenNullLine()
-        {
-            CsvReader reader = new();
-            var wordsFreq = new Dictionary<string, float>();
-            var response = reader.ParseLine(null, wordsFreq);
-            Assert.AreEqual(0, response.Count);
-        }
-
-        [TestMethod]
-        public void DoesNotAddDataWhenEmptyLine()
-        {
-            CsvReader reader = new();
-            var wordsFreq = new Dictionary<string, float>();
-            var response = reader.ParseLine("", wordsFreq);
-            Assert.AreEqual(0, response.Count);
-        }
-
-        [TestMethod]
         public void AddDataWhenEmptyDictionary()
         {
             CsvReader reader = new();
             var wordsFreq = new Dictionary<string, float>();
-            var response = reader.ParseLine("coucou;2", wordsFreq);
-            Assert.AreEqual("coucou", response.First().Key);
-            Assert.AreEqual(2, response.First().Value);
+            reader.ParseLine("coucou;2", wordsFreq);
+            Assert.AreEqual("coucou", wordsFreq.First().Key);
+            Assert.AreEqual(2, wordsFreq.First().Value);
         }
 
         [TestMethod]
@@ -45,9 +27,9 @@ namespace IntegrationTests
         {
             CsvReader reader = new();
             var wordsFreq = new Dictionary<string, float> {{"toucan", 5}};
-            var response = reader.ParseLine("coucou;2", wordsFreq);
-            Assert.IsTrue( response.ContainsKey("toucan"));
-            Assert.IsTrue( response.ContainsValue(5));
+            reader.ParseLine("coucou;2", wordsFreq);
+            Assert.IsTrue(wordsFreq.ContainsKey("toucan"));
+            Assert.IsTrue(wordsFreq.ContainsValue(5));
         }
 
         [TestMethod]
@@ -55,9 +37,9 @@ namespace IntegrationTests
         {
             CsvReader reader = new();
             var wordsFreq = new Dictionary<string, float> {{"coucou", 5}};
-            var response = reader.ParseLine("coucou;2", wordsFreq);
-            Assert.AreEqual("coucou", response.First().Key);
-            Assert.AreEqual(7, response.First().Value);
+            reader.ParseLine("coucou;2", wordsFreq);
+            Assert.AreEqual("coucou", wordsFreq.First().Key);
+            Assert.AreEqual(7, wordsFreq.First().Value);
         }
 
         [TestMethod]
@@ -65,9 +47,9 @@ namespace IntegrationTests
         {
             CsvReader reader = new();
             var wordsFreq = new Dictionary<string, float>();
-            var response = reader.ParseLine("coucou;5.5", wordsFreq);
-            Assert.AreEqual("coucou", response.First().Key);
-            Assert.AreEqual(5.5f, response.First().Value);
+            reader.ParseLine("coucou;5.5", wordsFreq);
+            Assert.AreEqual("coucou", wordsFreq.First().Key);
+            Assert.AreEqual(5.5f, wordsFreq.First().Value);
         }
 
         [TestMethod]
@@ -75,16 +57,25 @@ namespace IntegrationTests
         {
             CsvReader reader = new();
             var wordsFreq = new Dictionary<string, float>();
-            var response = reader.ParseLine("cou cou;5.5", wordsFreq);
-            Assert.IsFalse(response.Any());
+            reader.ParseLine("cou cou;5.5", wordsFreq);
+            Assert.IsFalse(wordsFreq.Any());
         }
         [TestMethod]
         public void DoesNotAddDataWithDash()
         {
             CsvReader reader = new();
             var wordsFreq = new Dictionary<string, float>();
-            var response = reader.ParseLine("cou-cou;5.5", wordsFreq);
-            Assert.IsFalse(response.Any());
+            reader.ParseLine("cou-cou;5.5", wordsFreq);
+            Assert.IsFalse(wordsFreq.Any());
+        }
+
+        [TestMethod]
+        public void DoesNotAddDataWithApostrophe()
+        {
+            CsvReader reader = new();
+            var wordsFreq = new Dictionary<string, float>();
+            reader.ParseLine("cou'cou;5.5", wordsFreq);
+            Assert.IsFalse(wordsFreq.Any());
         }
     }
 }

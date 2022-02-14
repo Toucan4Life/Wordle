@@ -30,8 +30,7 @@ namespace Wordle
         public IEnumerable<KeyValuePair<string, float>> GetEntropy(Dictionary<string, float> wordDico)
         {
             return wordDico.AsParallel().Select(keyValuePair =>
-                    new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordDico)))
-                .ToList();
+                new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordDico)));
         }
 
         public float CalculateEntropy(string actualWord, Dictionary<string, float> wordDico)
