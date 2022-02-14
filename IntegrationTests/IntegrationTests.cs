@@ -21,7 +21,7 @@ namespace IntegrationTests
             Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
             var _solver = new Solver();
             var patterns = new List<Pattern> {Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect };
-            var result =_solver.FilterWithEntropy("feuille", patterns, new WordSearcher(possibleSolution)).ToList();
+            var result = _solver.GetEntropy(new Rule().Filter("feuille", patterns, new WordSearcher(possibleSolution))).ToList();
             Assert.IsNotNull(result);
         }
 
@@ -40,7 +40,7 @@ namespace IntegrationTests
         {
             Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
             var _solver = new Solver();
-            var result = _solver.FilterWithEntropy(new WordSearcher(possibleSolution){WordLength = 4}).ToList();
+            var result = _solver.GetEntropy(new WordSearcher(possibleSolution){WordLength = 4}).ToList();
             Assert.IsNotNull(result);
         }
 

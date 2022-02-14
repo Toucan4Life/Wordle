@@ -38,10 +38,10 @@ internal class Program
                     if (!string.IsNullOrWhiteSpace(enteredline))
                         wordSearcher.AddCharPosToMatch(enteredline[0], 0);
 
-                    possibleSolution = new Solver().FilterWithEntropy(wordSearcher);
+                    possibleSolution = new Solver().GetEntropy(wordSearcher);
 
                     Console.WriteLine($"# possible solution : {wordSearcher.Search().Count()}");
-                    foreach (var (key, value) in possibleSolution.OrderByDescending(t => t.Value).Take(20)) Console.WriteLine($"{key} , {value}");
+                    foreach (var (key, value) in possibleSolution.OrderByDescending(t => t.Value).Take(10)) Console.WriteLine($"{key} , {value}");
                     break;
                 }
                 default:
@@ -51,14 +51,17 @@ internal class Program
 
                     if (patternString.Length != enteredLine.Length)
                         throw new ArgumentException("Pattern and Word are not same size");
-                    
-                    var _solver = new Solver();
 
-                    possibleSolution = _solver.FilterWithEntropy(enteredLine, patternString.Select(MapPattern).ToList(), wordSearcher)
-                        .OrderByDescending(t => t.Value);
+                    var possibleSolsolution=new Rule().Filter(enteredLine, patternString.Select(MapPattern).ToList(), wordSearcher).Search();
 
-                    Console.WriteLine($"# possible solution : {wordSearcher.Search().Count()}");
-                    foreach (var (key, value) in possibleSolution.Take(20)) Console.WriteLine($"{key} , {value}");
+                    var numberOfSolution = possibleSolsolution.Count();
+                    Console.WriteLine($"# possible solution : {numberOfSolution}");
+                    foreach (var (key, value) in possibleSolsolution.OrderByDescending(t => t.Value).Take(10)) Console.WriteLine($"{key} , {value}");
+
+                    if (numberOfSolution == 1) { break; }
+
+                    Console.WriteLine($"# recommend next word : ");
+                    foreach (var (key, value) in new Solver().GetEntropy(wordSearcher).OrderByDescending(t => t.Value).Take(10)) Console.WriteLine($"{key} , {value}");
                     break;
                 }
             }

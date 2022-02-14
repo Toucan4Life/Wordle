@@ -11,23 +11,10 @@ namespace Wordle
 {
     public class Solver
     {
-        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(WordSearcher wordSearcher)
-        {
-            return GetEntropy(wordSearcher);
-        }
-
-        public IEnumerable<KeyValuePair<string, float>> FilterWithEntropy(string word, IEnumerable<Pattern> pattern, WordSearcher wordSearcher)
-        {
-            return GetEntropy(new Rule().Filter(word, pattern, wordSearcher));
-        }
-
         public IEnumerable<KeyValuePair<string, float>> GetEntropy(WordSearcher wordSearcher)
         {
             var wordDico = wordSearcher.Search();
-            if (wordDico.Count()==1)
-            {
-                return new KeyValuePair<string, float>[]{new(wordDico.Single().Key,0)};
-            }
+
             var wordSearcherWordDictionary = wordSearcher.WordDictionary.Where(t=>t.Key.Length==wordSearcher.WordLength);
             return wordSearcherWordDictionary.AsParallel().Select(keyValuePair =>
                 new KeyValuePair<string, float>(keyValuePair.Key, CalculateEntropy(keyValuePair.Key, wordDico)));
