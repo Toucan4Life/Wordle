@@ -22,23 +22,14 @@ namespace Wordle.BLL
 
                 foreach (var triple in tuple)
                 {
-                    switch (triple.pat)
-                    {
-                        case Pattern.Correct:
-                            searcher.AddCharPosToMatch(triple.character, triple.index);
-                            break;
-                        case Pattern.Misplaced:
-                            searcher.AddCharPosToNotMatch(triple.character, triple.index);
-                            break;
-                        case Pattern.Incorrect:
-                            searcher.AddCharPosToNotMatch(triple.character, triple.index);
-                            break;
-                    }
+                    if (triple.pat == Pattern.Correct)
+                        searcher.AddCharPosToMatch(triple.character, triple.index);
+                    else
+                        searcher.AddCharPosToNotMatch(triple.character, triple.index);
                 }
             }
 
-            var keyValuePairs = searcher.Search().ToList();
-            return keyValuePairs;
+            return searcher.Search().ToList();
         }
 
 

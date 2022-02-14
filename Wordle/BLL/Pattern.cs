@@ -12,6 +12,7 @@ namespace Wordle.BLL
         Misplaced = 1,
         Correct = 2,
     }
+
     public class ListEqualityComparer<Pattern> : IEqualityComparer<List<Pattern>>
     {
         public bool Equals(List<Pattern> lhs, List<Pattern> rhs)

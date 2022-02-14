@@ -24,13 +24,6 @@ namespace IntegrationTests
             Assert.IsTrue(  _solver.Filter("coucou", patterns, new WordSearcher(new Dictionary<string, float> { { "coucou", 0 } })).Any(t=>t.Key == "coucou"));
         }
 
-        //[TestMethod]
-        //public void SolverReturnErrorWhenStringIsEmpty()
-        //{
-        //    Solver _solver = new(new Dictionary<string, float> { });
-        //    Assert.ThrowsException<ArgumentNullException>(() => _solver.Filter("",""));
-        //}
-
         [TestMethod]
         public void SolverDictionaryWordWhenThereIsOnlyOneWord()
         {
@@ -201,13 +194,6 @@ namespace IntegrationTests
         [TestMethod]
         public void RedYellowGreen4()
         {
-            var patterns1 = new List<Pattern>
-            {
-                Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect,
-                Pattern.Misplaced, Pattern.Incorrect, Pattern.Misplaced,
-                Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect,
-                Pattern.Incorrect
-            };
             var patterns2 = new List<Pattern>
             {
                 Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced,
@@ -215,25 +201,17 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced,
                 Pattern.Incorrect
             };
+
             Rule _solver = new();
-            var dictionary = _solver
-                .Filter("maintenant", patterns1,
-                    new WordSearcher(new Dictionary<string, float>
-                        {{"maintenant", 0}, {"exactement", 0}, {"encourager", 0}}))
-                .ToDictionary(t => t.Key, t => t.Value);
-            var dictionary2 = _solver.Filter("exactement", patterns2, new WordSearcher(dictionary ));
+            var wordDictionary = new Dictionary<string, float> {{"maintenant", 0}, {"exactement", 0}, {"encourager", 0}};
+
+            var dictionary2 = _solver.Filter("exactement", patterns2, new WordSearcher(wordDictionary));
             Assert.IsTrue(dictionary2.Any(t => t.Key == "encourager"));
         }
 
         [TestMethod]
         public void RedYellowGreen5()
         {
-            var patterns1 = new List<Pattern>
-            {
-                Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect,
-                Pattern.Incorrect, Pattern.Misplaced, Pattern.Misplaced,
-                Pattern.Incorrect, Pattern.Correct
-            };
             var patterns2 = new List<Pattern>
             {
                 Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect,
@@ -241,7 +219,7 @@ namespace IntegrationTests
                 Pattern.Incorrect, Pattern.Correct
             };
             Rule _solver = new();
-            var dictionary = _solver.Filter("restaure", patterns1, new WordSearcher(new Dictionary<string, float> { { "mauvaise", 0 }, { "aiguille", 0 }, { "habitude", 0 }, { "restaure", 0 } }));
+
             var dictionary2 = _solver.Filter("habitude", patterns2, new WordSearcher(new Dictionary<string, float> { { "coucou", 0 } }));
             Assert.IsFalse(dictionary2.Any(t => t.Key == "mauvaise"));
         }
@@ -249,20 +227,6 @@ namespace IntegrationTests
         [TestMethod]
         public void RedYellowGreen6()
         {
-            var patterns1 = new List<Pattern>
-            {
-                Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect,
-                Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect,
-                Pattern.Misplaced, Pattern.Incorrect, Pattern.Misplaced,
-                Pattern.Misplaced, Pattern.Misplaced
-            };
-            var patterns2 = new List<Pattern>
-            {
-                Pattern.Misplaced, Pattern.Misplaced, Pattern.Misplaced,
-                Pattern.Incorrect, Pattern.Misplaced, Pattern.Misplaced,
-                Pattern.Correct, Pattern.Correct, Pattern.Misplaced,
-                Pattern.Incorrect, Pattern.Incorrect
-            };
             var patterns3 = new List<Pattern>
             {
                 Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect,
@@ -270,27 +234,23 @@ namespace IntegrationTests
                 Pattern.Correct, Pattern.Correct, Pattern.Correct,
                 Pattern.Correct, Pattern.Correct
             };
+
             Rule _solver = new();
-            var dictionary = _solver
-                .Filter("abdicataire", patterns1,
-                    new WordSearcher(new Dictionary<string, float>
-                    {
-                        {"abdicataire", 0}, {"litterature", 0}, {"ventilateur", 0}, {"realisateur", 0},
-                        {"utilisateur", 0}
-                    })).ToDictionary(t => t.Key, t => t.Value);
-            var dictionary2 = _solver.Filter("litterature", patterns2, new WordSearcher(dictionary)).ToDictionary(t => t.Key, t => t.Value);
-            var dictionary3 = _solver.Filter("ventilateur", patterns3, new WordSearcher(dictionary2));
+            var wordDictionary = new Dictionary<string, float>
+            {
+                {"abdicataire", 0}, {"litterature", 0}, {"ventilateur", 0}, {"realisateur", 0},
+                {"utilisateur", 0}
+            };
+
+            var dictionary3 = _solver.Filter("ventilateur", patterns3, new WordSearcher(wordDictionary))
+                .ToDictionary(t => t.Key, t => t.Value);
+
             Assert.IsFalse(dictionary3.Any(t => t.Key == "realisateur"));
         }
 
         [TestMethod]
         public void RedYellowGreen7()
         {
-            var patterns1 = new List<Pattern>
-            {
-                Pattern.Misplaced, Pattern.Misplaced, Pattern.Misplaced,
-                Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect
-            };
             var patterns2 = new List<Pattern>
             {
                 Pattern.Misplaced, Pattern.Misplaced, Pattern.Misplaced,
@@ -298,8 +258,7 @@ namespace IntegrationTests
             };
             var wordDictionary = new Dictionary<string, float> { { "grande", 0 }, { "andain", 0 }, { "dansee", 0 } };
             Rule _solver = new();
-            var dictionary = _solver.Filter("andain", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t=>t.Key, t=>t.Value);
-            var dictionary2 = _solver.Filter("dansee", patterns2, new WordSearcher(dictionary));
+            var dictionary2 = _solver.Filter("dansee", patterns2, new WordSearcher(wordDictionary));
             Assert.IsTrue(dictionary2.Any(t => t.Key == "grande"));
         }
 
@@ -317,22 +276,5 @@ namespace IntegrationTests
             var dictionary = _solver.Filter("usurier", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t => t.Key, t => t.Value);
             Assert.IsFalse(dictionary.Any(t => t.Key == "butoirs"));
         }
-
-        //[TestMethod]
-        //public void RedYellowGreen9()
-        //{
-        //    //CCIIIMM
-        //    //CCIMIMI
-        //    var patterns1 = new List<Pattern>
-        //    {
-        //        Pattern.Correct, Pattern.Correct, Pattern.Incorrect,
-        //        Pattern.Misplaced, Pattern.Incorrect, Pattern.Misplaced
-        //        ,Pattern.Incorrect
-        //    };
-        //    var wordDictionary = new Dictionary<string, float> { { "usurier", 0 }, { "usagers", 0 } };
-        //    Solver _solver = new();
-        //    var dictionary = _solver.Filter("usurier", patterns1, new WordSearcher(wordDictionary)).ToDictionary(t => t.Key, t => t.Value);
-        //    Assert.IsFalse(dictionary.Any(t => t.Key == "usagers"));
-        //}
     }
 }
