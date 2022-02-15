@@ -73,7 +73,7 @@
             // 
             this.recommendedWordListBox.FormattingEnabled = true;
             this.recommendedWordListBox.ItemHeight = 15;
-            this.recommendedWordListBox.Location = new System.Drawing.Point(256, 42);
+            this.recommendedWordListBox.Location = new System.Drawing.Point(477, 42);
             this.recommendedWordListBox.Name = "recommendedWordListBox";
             this.recommendedWordListBox.Size = new System.Drawing.Size(120, 184);
             this.recommendedWordListBox.TabIndex = 3;
@@ -83,7 +83,7 @@
             // 
             this.possibleWordListBox.FormattingEnabled = true;
             this.possibleWordListBox.ItemHeight = 15;
-            this.possibleWordListBox.Location = new System.Drawing.Point(491, 42);
+            this.possibleWordListBox.Location = new System.Drawing.Point(262, 42);
             this.possibleWordListBox.Name = "possibleWordListBox";
             this.possibleWordListBox.Size = new System.Drawing.Size(120, 184);
             this.possibleWordListBox.TabIndex = 4;
@@ -92,7 +92,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(256, 24);
+            this.label2.Location = new System.Drawing.Point(477, 24);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(126, 15);
             this.label2.TabIndex = 5;
@@ -101,7 +101,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(491, 24);
+            this.label3.Location = new System.Drawing.Point(262, 24);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(85, 15);
             this.label3.TabIndex = 6;

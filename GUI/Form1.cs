@@ -6,26 +6,31 @@ namespace GUI
 {
     public partial class Form1 : Form
     {
-        private WordSearcher wordSearcher;
+        private IWordleSolver _wordSolver;
         public Form1()
         {
             InitializeComponent();
-            wordSearcher = new WordSearcher(new CsvReader().GetAllWords("SAL/Lexique381.csv"));
+            _wordSolver = new WordleSolver();
         }
 
         private void SearchClicked(object sender, EventArgs e)
         {
-            wordSearcher.WordLength = int.Parse(textBox1.Text); ;
-            possibleWordListBox.DataSource = wordSearcher.Search().OrderByDescending(t => t.Value).Take(20).Select(t => $"{t.Key} {t.Value}").ToList();
-            recommendedWordListBox.DataSource = new Solver().GetEntropy(wordSearcher).OrderByDescending(t=>t.Value).Take(20).Select(t=>$"{t.Key} {t.Value}").ToList();
+            possibleWordListBox.DataSource = _wordSolver.SearchPossibleWord(int.Parse(textBox1.Text))
+                .OrderByDescending(t => t.Value).Take(20).Select(t => $"{t.Key} {t.Value}").ToList();
+
+            recommendedWordListBox.DataSource = _wordSolver.RetrieveCurrentEntropy().OrderByDescending(t => t.Value).Take(20)
+                .Select(t => $"{t.Key} {t.Value}").ToList();
         }
 
         private void StepButtonClicked(object sender, EventArgs e)
         {
-            new Rule().Filter(textBox3.Text, textBox2.Text.Select(MapPattern).ToList(), wordSearcher).Search();
+            _wordSolver.ApplyWordPattern(textBox3.Text, textBox2.Text.Select(MapPattern).ToList());
 
-            possibleWordListBox.DataSource = wordSearcher.Search().OrderByDescending(t=>t.Value).Take(20).Select(t => $"{t.Key} {t.Value}").ToList();
-            recommendedWordListBox.DataSource = new Solver().GetEntropy(wordSearcher).OrderByDescending(t => t.Value).Take(20).Select(t => $"{t.Key} {t.Value}").ToList();
+            possibleWordListBox.DataSource = _wordSolver.SearchPossibleWord(int.Parse(textBox1.Text))
+                .OrderByDescending(t => t.Value).Take(20).Select(t => $"{t.Key} {t.Value}").ToList();
+
+            recommendedWordListBox.DataSource = _wordSolver.RetrieveCurrentEntropy().OrderByDescending(t => t.Value).Take(20)
+                .Select(t => $"{t.Key} {t.Value}").ToList();
             textBox2.Text = null;
         }
 
@@ -42,7 +47,7 @@ namespace GUI
 
         private void RestartButton_Click(object sender, EventArgs e)
         {
-            wordSearcher = new WordSearcher(new CsvReader().GetAllWords("SAL/Lexique381.csv"));
+            _wordSolver = new WordleSolver();
             possibleWordListBox.DataSource = null;
             recommendedWordListBox.DataSource = null;
             textBox3.Text = null;
