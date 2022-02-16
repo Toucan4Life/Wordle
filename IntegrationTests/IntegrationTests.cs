@@ -15,34 +15,16 @@ namespace IntegrationTests
 
         
 
-        [TestMethod]
-        public void StressTests()
-        {
-            Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
-            var _solver = new Solver();
-            var patterns = new List<Pattern> {Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect };
-            var result = _solver.GetEntropy(new Rule().Filter("feuille", patterns, new WordSearcher(possibleSolution))).ToList();
-            Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        public void StressTests2()
-        {
-            IEnumerable<KeyValuePair<string, float>> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv")
-                .Where(t => t.Key.Length == 7);
-            var _solver = new Solver();
-            var result = _solver.CalculateEntropy("feuille", possibleSolution);
-            Assert.IsTrue(Math.Abs(result - 6.90924931) < 0.000001);
-        }
-
-        [TestMethod]
-        public void StressTests3()
-        {
-            Dictionary<string, float> possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv");
-            var _solver = new Solver();
-            var result = _solver.GetEntropy(new WordSearcher(possibleSolution){WordLength = 4}).ToList();
-            Assert.IsNotNull(result);
-        }
+        //[TestMethod]
+        //public void StressTests()
+        //{
+        //    var _solver = new WordleSolver(7);
+        //    var patterns = new List<Pattern> {Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect };
+        //    _solver.ApplyWordPattern("feuille", patterns);
+        //    var result = _solver.RetrieveRecommendedWords().ToList();
+        //    Assert.IsNotNull(result);
+        //    Assert.IsTrue(Math.Abs(result - 6.90924931) < 0.000001);
+        //}
 
         #endregion
 

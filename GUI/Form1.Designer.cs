@@ -73,9 +73,9 @@
             // 
             this.recommendedWordListBox.FormattingEnabled = true;
             this.recommendedWordListBox.ItemHeight = 15;
-            this.recommendedWordListBox.Location = new System.Drawing.Point(477, 42);
+            this.recommendedWordListBox.Location = new System.Drawing.Point(445, 42);
             this.recommendedWordListBox.Name = "recommendedWordListBox";
-            this.recommendedWordListBox.Size = new System.Drawing.Size(120, 184);
+            this.recommendedWordListBox.Size = new System.Drawing.Size(158, 184);
             this.recommendedWordListBox.TabIndex = 3;
             this.recommendedWordListBox.SelectedIndexChanged += new System.EventHandler(this.recommendedWordListBox_SelectedIndexChanged);
             // 
@@ -85,14 +85,14 @@
             this.possibleWordListBox.ItemHeight = 15;
             this.possibleWordListBox.Location = new System.Drawing.Point(262, 42);
             this.possibleWordListBox.Name = "possibleWordListBox";
-            this.possibleWordListBox.Size = new System.Drawing.Size(120, 184);
+            this.possibleWordListBox.Size = new System.Drawing.Size(167, 184);
             this.possibleWordListBox.TabIndex = 4;
             this.possibleWordListBox.SelectedIndexChanged += new System.EventHandler(this.possibleWordListBox_SelectedIndexChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(477, 24);
+            this.label2.Location = new System.Drawing.Point(445, 24);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(126, 15);
             this.label2.TabIndex = 5;
@@ -140,7 +140,7 @@
             // 
             this.textBox2.Location = new System.Drawing.Point(94, 153);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(50, 23);
+            this.textBox2.Size = new System.Drawing.Size(101, 23);
             this.textBox2.TabIndex = 10;
             // 
             // label5
@@ -156,7 +156,7 @@
             // 
             this.textBox3.Location = new System.Drawing.Point(94, 124);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(50, 23);
+            this.textBox3.Size = new System.Drawing.Size(101, 23);
             this.textBox3.TabIndex = 12;
             // 
             // Form1

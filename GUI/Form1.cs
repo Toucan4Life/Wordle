@@ -10,15 +10,16 @@ namespace GUI
         public Form1()
         {
             InitializeComponent();
-            _wordSolver = new WordleSolver();
         }
 
         private void SearchClicked(object sender, EventArgs e)
         {
-            possibleWordListBox.DataSource = _wordSolver.SearchPossibleWord(int.Parse(textBox1.Text))
+            _wordSolver = new WordleSolver(int.Parse(textBox1.Text));
+
+            possibleWordListBox.DataSource = _wordSolver.RetrievePossibleWords()
                 .OrderByDescending(t => t.Value).Take(20).Select(t => $"{t.Key} {t.Value}").ToList();
 
-            recommendedWordListBox.DataSource = _wordSolver.RetrieveCurrentEntropy().OrderByDescending(t => t.Value).Take(20)
+            recommendedWordListBox.DataSource = _wordSolver.RetrieveRecommendedWords().OrderByDescending(t => t.Value).Take(20)
                 .Select(t => $"{t.Key} {t.Value}").ToList();
         }
 
@@ -26,10 +27,10 @@ namespace GUI
         {
             _wordSolver.ApplyWordPattern(textBox3.Text, textBox2.Text.Select(MapPattern).ToList());
 
-            possibleWordListBox.DataSource = _wordSolver.SearchPossibleWord(int.Parse(textBox1.Text))
+            possibleWordListBox.DataSource = _wordSolver.RetrievePossibleWords()
                 .OrderByDescending(t => t.Value).Take(20).Select(t => $"{t.Key} {t.Value}").ToList();
 
-            recommendedWordListBox.DataSource = _wordSolver.RetrieveCurrentEntropy().OrderByDescending(t => t.Value).Take(20)
+            recommendedWordListBox.DataSource = _wordSolver.RetrieveRecommendedWords().OrderByDescending(t => t.Value).Take(20)
                 .Select(t => $"{t.Key} {t.Value}").ToList();
             textBox2.Text = null;
         }
@@ -47,7 +48,6 @@ namespace GUI
 
         private void RestartButton_Click(object sender, EventArgs e)
         {
-            _wordSolver = new WordleSolver();
             possibleWordListBox.DataSource = null;
             recommendedWordListBox.DataSource = null;
             textBox3.Text = null;
