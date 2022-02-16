@@ -34,13 +34,15 @@
             this.recommendedWordListBox = new System.Windows.Forms.ListBox();
             this.possibleWordListBox = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.possibleWordLabel = new System.Windows.Forms.Label();
             this.StepButton = new System.Windows.Forms.Button();
             this.RestartButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
+            this.entropyListLabel = new System.Windows.Forms.Label();
+            this.possibleWordCountLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBox1
@@ -73,7 +75,7 @@
             // 
             this.recommendedWordListBox.FormattingEnabled = true;
             this.recommendedWordListBox.ItemHeight = 15;
-            this.recommendedWordListBox.Location = new System.Drawing.Point(445, 42);
+            this.recommendedWordListBox.Location = new System.Drawing.Point(491, 109);
             this.recommendedWordListBox.Name = "recommendedWordListBox";
             this.recommendedWordListBox.Size = new System.Drawing.Size(158, 184);
             this.recommendedWordListBox.TabIndex = 3;
@@ -83,7 +85,7 @@
             // 
             this.possibleWordListBox.FormattingEnabled = true;
             this.possibleWordListBox.ItemHeight = 15;
-            this.possibleWordListBox.Location = new System.Drawing.Point(262, 42);
+            this.possibleWordListBox.Location = new System.Drawing.Point(262, 109);
             this.possibleWordListBox.Name = "possibleWordListBox";
             this.possibleWordListBox.Size = new System.Drawing.Size(167, 184);
             this.possibleWordListBox.TabIndex = 4;
@@ -92,20 +94,20 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(445, 24);
+            this.label2.Location = new System.Drawing.Point(491, 85);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(126, 15);
             this.label2.TabIndex = 5;
             this.label2.Text = "Recommended Word :";
             // 
-            // label3
+            // possibleWordLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(262, 24);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(85, 15);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Possible Word:";
+            this.possibleWordLabel.AutoSize = true;
+            this.possibleWordLabel.Location = new System.Drawing.Point(262, 42);
+            this.possibleWordLabel.Name = "possibleWordLabel";
+            this.possibleWordLabel.Size = new System.Drawing.Size(93, 15);
+            this.possibleWordLabel.TabIndex = 6;
+            this.possibleWordLabel.Text = "Possible Words :";
             // 
             // StepButton
             // 
@@ -159,18 +161,38 @@
             this.textBox3.Size = new System.Drawing.Size(101, 23);
             this.textBox3.TabIndex = 12;
             // 
+            // entropyListLabel
+            // 
+            this.entropyListLabel.AutoSize = true;
+            this.entropyListLabel.Location = new System.Drawing.Point(262, 85);
+            this.entropyListLabel.Name = "entropyListLabel";
+            this.entropyListLabel.Size = new System.Drawing.Size(63, 15);
+            this.entropyListLabel.TabIndex = 13;
+            this.entropyListLabel.Text = "Entropy : 0";
+            // 
+            // possibleWordCountLabel
+            // 
+            this.possibleWordCountLabel.AutoSize = true;
+            this.possibleWordCountLabel.Location = new System.Drawing.Point(262, 70);
+            this.possibleWordCountLabel.Name = "possibleWordCountLabel";
+            this.possibleWordCountLabel.Size = new System.Drawing.Size(55, 15);
+            this.possibleWordCountLabel.TabIndex = 14;
+            this.possibleWordCountLabel.Text = "Count : 0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(635, 257);
+            this.ClientSize = new System.Drawing.Size(707, 305);
+            this.Controls.Add(this.possibleWordCountLabel);
+            this.Controls.Add(this.entropyListLabel);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.RestartButton);
             this.Controls.Add(this.StepButton);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.possibleWordLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.possibleWordListBox);
             this.Controls.Add(this.recommendedWordListBox);
@@ -192,12 +214,14 @@
         private ListBox recommendedWordListBox;
         private ListBox possibleWordListBox;
         private Label label2;
-        private Label label3;
+        private Label possibleWordLabel;
         private Button StepButton;
         private Button RestartButton;
         private Label label4;
         private TextBox textBox2;
         private Label label5;
         private TextBox textBox3;
+        private Label entropyListLabel;
+        private Label possibleWordCountLabel;
     }
 }

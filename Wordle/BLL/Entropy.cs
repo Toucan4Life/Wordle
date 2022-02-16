@@ -11,7 +11,7 @@ public class Entropy
             .Select(t => (float) t.Count() / patterns.Count));
     }
 
-    private float CalculateEntropy(IEnumerable<float> probabilities)
+    public float CalculateEntropy(IEnumerable<float> probabilities)
     {
         return (float) probabilities
             .Select(proba => proba * Math.Log2(1 / proba))

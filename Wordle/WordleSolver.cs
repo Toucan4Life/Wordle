@@ -37,5 +37,9 @@ namespace Wordle
             new Rule().Filter(word, patterns, _searcher);
         }
 
+        public float CalculateEntropy(List<float> probabilities)
+        {
+            return new Entropy().CalculateEntropy(probabilities);
+        }
     }
 }
