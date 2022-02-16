@@ -31,8 +31,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SearchButton = new System.Windows.Forms.Button();
-            this.recommendedWordListBox = new System.Windows.Forms.ListBox();
-            this.possibleWordListBox = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.possibleWordLabel = new System.Windows.Forms.Label();
             this.StepButton = new System.Windows.Forms.Button();
@@ -43,6 +41,8 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.entropyListLabel = new System.Windows.Forms.Label();
             this.possibleWordCountLabel = new System.Windows.Forms.Label();
+            this.possibleWordListView = new System.Windows.Forms.ListView();
+            this.recommendedWordListView = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // textBox1
@@ -71,30 +71,10 @@
             this.SearchButton.UseVisualStyleBackColor = true;
             this.SearchButton.Click += new System.EventHandler(this.SearchClicked);
             // 
-            // recommendedWordListBox
-            // 
-            this.recommendedWordListBox.FormattingEnabled = true;
-            this.recommendedWordListBox.ItemHeight = 15;
-            this.recommendedWordListBox.Location = new System.Drawing.Point(491, 109);
-            this.recommendedWordListBox.Name = "recommendedWordListBox";
-            this.recommendedWordListBox.Size = new System.Drawing.Size(158, 184);
-            this.recommendedWordListBox.TabIndex = 3;
-            this.recommendedWordListBox.SelectedIndexChanged += new System.EventHandler(this.recommendedWordListBox_SelectedIndexChanged);
-            // 
-            // possibleWordListBox
-            // 
-            this.possibleWordListBox.FormattingEnabled = true;
-            this.possibleWordListBox.ItemHeight = 15;
-            this.possibleWordListBox.Location = new System.Drawing.Point(262, 109);
-            this.possibleWordListBox.Name = "possibleWordListBox";
-            this.possibleWordListBox.Size = new System.Drawing.Size(167, 184);
-            this.possibleWordListBox.TabIndex = 4;
-            this.possibleWordListBox.SelectedIndexChanged += new System.EventHandler(this.possibleWordListBox_SelectedIndexChanged);
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(491, 85);
+            this.label2.Location = new System.Drawing.Point(533, 85);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(126, 15);
             this.label2.TabIndex = 5;
@@ -179,11 +159,31 @@
             this.possibleWordCountLabel.TabIndex = 14;
             this.possibleWordCountLabel.Text = "Count : 0";
             // 
+            // possibleWordListView
+            // 
+            this.possibleWordListView.Location = new System.Drawing.Point(262, 109);
+            this.possibleWordListView.Name = "possibleWordListView";
+            this.possibleWordListView.Size = new System.Drawing.Size(235, 184);
+            this.possibleWordListView.TabIndex = 15;
+            this.possibleWordListView.UseCompatibleStateImageBehavior = false;
+            this.possibleWordListView.SelectedIndexChanged += new System.EventHandler(this.possibleWordListView_SelectedIndexChanged);
+            // 
+            // recommendedWordListView
+            // 
+            this.recommendedWordListView.Location = new System.Drawing.Point(533, 109);
+            this.recommendedWordListView.Name = "recommendedWordListView";
+            this.recommendedWordListView.Size = new System.Drawing.Size(162, 184);
+            this.recommendedWordListView.TabIndex = 16;
+            this.recommendedWordListView.UseCompatibleStateImageBehavior = false;
+            this.recommendedWordListView.SelectedIndexChanged += new System.EventHandler(this.recommendedWordListView_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(707, 305);
+            this.Controls.Add(this.recommendedWordListView);
+            this.Controls.Add(this.possibleWordListView);
             this.Controls.Add(this.possibleWordCountLabel);
             this.Controls.Add(this.entropyListLabel);
             this.Controls.Add(this.textBox3);
@@ -194,8 +194,6 @@
             this.Controls.Add(this.StepButton);
             this.Controls.Add(this.possibleWordLabel);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.possibleWordListBox);
-            this.Controls.Add(this.recommendedWordListBox);
             this.Controls.Add(this.SearchButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
@@ -211,8 +209,6 @@
         private TextBox textBox1;
         private Label label1;
         private Button SearchButton;
-        private ListBox recommendedWordListBox;
-        private ListBox possibleWordListBox;
         private Label label2;
         private Label possibleWordLabel;
         private Button StepButton;
@@ -223,5 +219,7 @@
         private TextBox textBox3;
         private Label entropyListLabel;
         private Label possibleWordCountLabel;
+        private ListView possibleWordListView;
+        private ListView recommendedWordListView;
     }
 }
