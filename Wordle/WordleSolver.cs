@@ -12,10 +12,14 @@ namespace Wordle
     {
         private WordSearcher _searcher;
 
-        public WordleSolver(int wordLength)
+        public WordleSolver(int wordLength, char firstchar = char.MinValue)
         {
-            _searcher = new WordSearcher(new CsvReader().GetAllWords("SAL/Lexique381.csv")
-                .Where(t => t.Key.Length == wordLength)){WordLength = wordLength };
+            var wordDico = new CsvReader().GetAllWords("SAL/Lexique381.csv")
+                .Where(t => t.Key.Length == wordLength);
+
+            _searcher = new WordSearcher(firstchar == char.MinValue
+                ? wordDico
+                : wordDico.Where(t => t.Key[0] == firstchar)) {WordLength = wordLength};
         }
 
         public IEnumerable<KeyValuePair<string, float>> RetrievePossibleWords()

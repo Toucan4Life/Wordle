@@ -43,11 +43,13 @@
             this.possibleWordCountLabel = new System.Windows.Forms.Label();
             this.possibleWordListView = new System.Windows.Forms.ListView();
             this.recommendedWordListView = new System.Windows.Forms.ListView();
+            this.firstCharTextBox = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(94, 42);
+            this.textBox1.Location = new System.Drawing.Point(191, 26);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(50, 23);
             this.textBox1.TabIndex = 0;
@@ -55,7 +57,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 45);
+            this.label1.Location = new System.Drawing.Point(11, 29);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(76, 15);
             this.label1.TabIndex = 1;
@@ -177,11 +179,29 @@
             this.recommendedWordListView.UseCompatibleStateImageBehavior = false;
             this.recommendedWordListView.SelectedIndexChanged += new System.EventHandler(this.recommendedWordListView_SelectedIndexChanged);
             // 
+            // firstCharTextBox
+            // 
+            this.firstCharTextBox.Location = new System.Drawing.Point(191, 58);
+            this.firstCharTextBox.Name = "firstCharTextBox";
+            this.firstCharTextBox.Size = new System.Drawing.Size(50, 23);
+            this.firstCharTextBox.TabIndex = 17;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(13, 61);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(172, 15);
+            this.label3.TabIndex = 18;
+            this.label3.Text = "First Character (can be empty) :";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(707, 305);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.firstCharTextBox);
             this.Controls.Add(this.recommendedWordListView);
             this.Controls.Add(this.possibleWordListView);
             this.Controls.Add(this.possibleWordCountLabel);
@@ -221,5 +241,7 @@
         private Label possibleWordCountLabel;
         private ListView possibleWordListView;
         private ListView recommendedWordListView;
+        private TextBox firstCharTextBox;
+        private Label label3;
     }
 }

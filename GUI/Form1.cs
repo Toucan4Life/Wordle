@@ -21,7 +21,9 @@ namespace GUI
 
         private void SearchClicked(object sender, EventArgs e)
         {
-            _wordSolver = new WordleSolver(int.Parse(textBox1.Text));
+            _wordSolver = (string.IsNullOrWhiteSpace(firstCharTextBox.Text) || firstCharTextBox.Text.Length > 1)
+                ? new WordleSolver(int.Parse(textBox1.Text))
+                : new WordleSolver(int.Parse(textBox1.Text), firstCharTextBox.Text[0]);
 
             var retrievePossibleWords = _wordSolver.RetrievePossibleWords().ToList();
             var count = retrievePossibleWords.Count;
@@ -103,7 +105,8 @@ namespace GUI
             recommendedWordListView.Items.Clear();
             textBox3.Text = null;
             textBox1.Text = null;
-
+            possibleWordCountLabel.Text = $"Count : 0";
+            entropyListLabel.Text = $"Entropy : 0";
         }
 
         private void recommendedWordListView_SelectedIndexChanged(object sender, EventArgs e)
