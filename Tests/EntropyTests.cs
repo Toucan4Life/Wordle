@@ -11,24 +11,33 @@ namespace IntegrationTests
     public class EntropyTests
     {
 
-        //[TestMethod]
-        //public void EntropyCalculationWhenPossiblyReducedBy2()
-        //{
-        //    var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 } };
-        //    WordleSolver _solver = new();
+        [TestMethod]
+        public void EntropyCalculationWhenPossiblyReducedBy2()
+        {
+            Entropy _solver = new();
 
-        //    var entropy = _solver.CalculateEntropy("abe", wordDictionary);
-        //    Assert.AreEqual(1, entropy);
-        //}
+            var entropy = _solver.Calculate(new List<List<Pattern>>
+            {
+                new() {Pattern.Correct, Pattern.Correct, Pattern.Correct},
+                new() {Pattern.Correct, Pattern.Correct, Pattern.Incorrect}
+            });
+            Assert.AreEqual(1, entropy);
+        }
 
-        //[TestMethod]
-        //public void EntropyCalculationWhenPossiblyReducedBy4()
-        //{
-        //    var wordDictionary = new Dictionary<string, float> { { "abe", 0 }, { "aba", 0 }, { "cbe", 0 }, { "cba", 0 } };
-        //    WordleSolver _solver = new();
+        [TestMethod]
+        public void EntropyCalculationWhenPossiblyReducedBy4()
+        {
+            Entropy _solver = new();
 
-        //    var entropy = _solver.CalculateEntropy("abe", wordDictionary);
-        //    Assert.AreEqual(2, entropy);
-        //}
+            var entropy = _solver.Calculate(new List<List<Pattern>>
+            {
+                new() {Pattern.Correct, Pattern.Correct, Pattern.Correct},
+                new() {Pattern.Correct, Pattern.Correct, Pattern.Incorrect},
+                new() {Pattern.Incorrect, Pattern.Correct, Pattern.Incorrect},
+                new() {Pattern.Incorrect, Pattern.Correct, Pattern.Misplaced},
+            });
+
+            Assert.AreEqual(2, entropy);
+        }
     }
 }

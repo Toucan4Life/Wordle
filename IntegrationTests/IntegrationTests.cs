@@ -13,18 +13,19 @@ namespace IntegrationTests
     {
         #region Solver
 
-        
 
-        //[TestMethod]
-        //public void StressTests()
-        //{
-        //    var _solver = new WordleSolver(7);
-        //    var patterns = new List<Pattern> {Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect };
-        //    _solver.ApplyWordPattern("feuille", patterns);
-        //    var result = _solver.RetrieveRecommendedWords().ToList();
-        //    Assert.IsNotNull(result);
-        //    Assert.IsTrue(Math.Abs(result - 6.90924931) < 0.000001);
-        //}
+
+        [TestMethod]
+        public void StressTests()
+        {
+            var _solver = new WordleSolver(7);
+            var patterns = new List<Pattern> { Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect };
+            _solver.ApplyWordPattern("feuille", patterns);
+            var result = _solver.RetrieveRecommendedWords().OrderByDescending(t=>t.Value).Take(1).Single();
+            Assert.IsNotNull(result);
+            Assert.IsTrue(Math.Abs(result.Value - 8.124536) < 0.000001);
+            Assert.AreEqual("corsant", result.Key);
+        }
 
         #endregion
 
