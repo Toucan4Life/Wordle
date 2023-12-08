@@ -9,10 +9,9 @@ namespace Wordle
 {
     public interface IWordleSolver
     {
-        public IEnumerable<KeyValuePair<string, float>> RetrievePossibleWords();
-        public IEnumerable<KeyValuePair<string, float>> RetrieveRecommendedWords();
-        public void ApplyWordPattern(string word, List<Pattern> patterns);
-        public float CalculateEntropy(List<float> probabilities);
+        public IEnumerable<WordleEntity> RetrieveRecommendedWords();
+        public void ApplyWordPattern(string word, string patterns);
+        public float CalculateUniformEntropy(int count);
 
     }
 }

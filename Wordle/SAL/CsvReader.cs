@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AnyAscii;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Wordle.SAL
 {
@@ -14,7 +16,7 @@ namespace Wordle.SAL
         {
             var wordsFreq = new Dictionary<string, float>();
 
-            using var reader = new StreamReader(path);
+            using var reader = new StreamReader(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/" + path);
             //skip header
             reader.ReadLine();
 

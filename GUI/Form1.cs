@@ -1,3 +1,4 @@
+using System.Windows.Forms;
 using Wordle;
 using Wordle.BLL;
 using Wordle.SAL;
@@ -25,78 +26,36 @@ namespace GUI
                 ? new WordleSolver(int.Parse(textBox1.Text))
                 : new WordleSolver(int.Parse(textBox1.Text), firstCharTextBox.Text[0]);
 
-            var retrievePossibleWords = _wordSolver.RetrievePossibleWords().ToList();
-            var count = retrievePossibleWords.Count;
-            possibleWordCountLabel.Text = $"Count : {count} ";
-            entropyListLabel.Text =
-                $"Entropy : {_wordSolver.CalculateEntropy(retrievePossibleWords.Select(t => (float) 1 / count).ToList())} ";
+            UpdateUiState();
+        }
 
+        private void UpdateUiState()
+        {
+            textBox2.Text = null;
+            textBox3.Text = null;
             possibleWordListView.Items.Clear();
-            foreach (var (key, value) in retrievePossibleWords
-                         .OrderByDescending(t => t.Value).Take(20))
-            {
-                possibleWordListView.Items.Add(new ListViewItem(new[] { key, value.ToString() }));
-            }
-
-
             recommendedWordListView.Items.Clear();
-            var retrieveRecommendedWords = _wordSolver.RetrieveRecommendedWords().ToList();
-            foreach (var (key, value) in retrieveRecommendedWords.OrderByDescending(t => t.Value).Take(20))
-            {
-                recommendedWordListView.Items.Add(new ListViewItem(new []{key,value.ToString()}));
-            }
-
             possibleWordListView.Items.Clear();
-            foreach (var (key, value) in retrievePossibleWords
-                         .OrderByDescending(t => t.Value).Take(20))
-            {
-                possibleWordListView.Items.Add(new ListViewItem(new[] { key, value.ToString(), retrieveRecommendedWords.Single(t=>t.Key==key).Value.ToString() }));
-            }
+
+            var retrieveRecommendedWords = _wordSolver.RetrieveRecommendedWords().ToList();
+            var globalEntropy = _wordSolver.CalculateUniformEntropy(retrieveRecommendedWords.Count);
+
+            possibleWordCountLabel.Text = $"Count : {retrieveRecommendedWords.Count} ";
+            entropyListLabel.Text = $"Entropy : {globalEntropy} ";
+
+            recommendedWordListView.Items.AddRange(retrieveRecommendedWords.OrderByDescending(t => t.Entropy).Take(20)
+                .Select(item => new ListViewItem(new[] { item.Name, item.Entropy.ToString() })).ToArray());
+
+            var listViewItems = from poss in retrieveRecommendedWords.OrderByDescending(t => t.Frequency).Take(20)
+                select new ListViewItem(new[] { poss.Name, poss.Frequency.ToString(), poss.Entropy.ToString() });
+
+            possibleWordListView.Items.AddRange(listViewItems.ToArray());
         }
 
         private void StepButtonClicked(object sender, EventArgs e)
         {
-            _wordSolver.ApplyWordPattern(textBox3.Text, textBox2.Text.Select(MapPattern).ToList());
-
-            var retrievePossibleWords = _wordSolver.RetrievePossibleWords().ToList();
-            var count = retrievePossibleWords.Count;
-            possibleWordCountLabel.Text = $"Count : {count} ";
-            entropyListLabel.Text =
-                $"Entropy : {_wordSolver.CalculateEntropy(retrievePossibleWords.Select(t => (float)1 / count).ToList())} ";
-            possibleWordListView.Items.Clear();
-            foreach (var (key, value) in retrievePossibleWords
-                         .OrderByDescending(t => t.Value).Take(20))
-            {
-                possibleWordListView.Items.Add(new ListViewItem(new[] { key, value.ToString() }));
-            }
-
-
-            recommendedWordListView.Items.Clear();
-            var retrieveRecommendedWords = _wordSolver.RetrieveRecommendedWords().ToList();
-            foreach (var (key, value) in retrieveRecommendedWords.OrderByDescending(t => t.Value).Take(20))
-            {
-                recommendedWordListView.Items.Add(new ListViewItem(new[] { key, value.ToString() }));
-            }
-            textBox2.Text = null;
-            textBox3.Text = null;
-
-            possibleWordListView.Items.Clear();
-            foreach (var (key, value) in retrievePossibleWords
-                         .OrderByDescending(t => t.Value).Take(20))
-            {
-                possibleWordListView.Items.Add(new ListViewItem(new[] { key, value.ToString(), retrieveRecommendedWords.Single(t => t.Key == key).Value.ToString() }));
-            }
-        }
-
-        private static Pattern MapPattern(char c)
-        {
-            return c switch
-            {
-                '0' => Pattern.Incorrect,
-                '1' => Pattern.Misplaced,
-                '2' => Pattern.Correct,
-                _ => throw new ArgumentOutOfRangeException("Pattern not supported")
-            };
+            _wordSolver.ApplyWordPattern(textBox3.Text, textBox2.Text);
+            UpdateUiState();
         }
 
         private void RestartButton_Click(object sender, EventArgs e)

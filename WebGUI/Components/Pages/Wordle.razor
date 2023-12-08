@@ -1,0 +1,78 @@
+﻿@page "/"
+@using global::Wordle
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using System.Net.Http
+@using global::Wordle.BLL
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+<PageTitle>Wordle</PageTitle>
+
+<h1>Wordle</h1>
+
+<EditForm Model="@Start" OnSubmit="@Submit" FormName="WordleStartParameter">
+    <label for="WordLength">WordLength</label>
+    <InputNumber @bind-Value="Start!.WordLength" class="form-control" id="WordLength" />
+    <label for="FirstChar">FirstChar (Optional)</label>
+    <InputText @bind-Value="Start!.FirstChar" class="form-control" id="FirstChar" />
+    <button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
+<EditForm Model="@Step" OnSubmit="@SubmitStep" FormName="WordleStepParameter">
+    <label for="Word">Word</label>
+    <InputText disabled="@Started" @bind-Value="Step!.Word" class="form-control" id="Word" />
+    <label for="Pattern">Pattern (0 => Incorrect / 1 => Misplaced / 2 => Correct)</label>
+    <InputText disabled="@Started" @bind-Value="Step!.Pattern" class="form-control" id="Pattern"/>
+    <button disabled="@Started" class="btn btn-primary" type="submit">Submit Step</button>
+</EditForm>
+@if (possibleWords != null)
+{
+    <span>Words count :  @(possibleWords.Count()) </span>
+    <span>Total Entropy : @(WordSolver.CalculateUniformEntropy(possibleWords.Count())) </span>
+
+    <div class="grid">
+        <QuickGrid Items="@possibleWords">
+            <PropertyColumn Property="@(p => p.Name)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.Frequency)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.Entropy)" Sortable="true" IsDefaultSortColumn="true" InitialSortDirection="SortDirection.Descending" />
+        </QuickGrid>
+    </div>
+}
+
+@code {
+
+    [SupplyParameterFromForm]
+    public WordleStartParameter? Start { get; set; }
+    [SupplyParameterFromForm]
+    public WordleStepParameter? Step { get; set; }
+    private IQueryable<WordleEntity> possibleWords;
+
+    protected override void OnInitialized()
+    {
+        Start ??= new WordleStartParameter { WordLength = 5 };
+        Step ??= new WordleStepParameter();
+    }
+
+    public static bool Started = true;
+    public static WordleSolver WordSolver { get; set; }
+    private void Submit()
+    {
+        Started = false;
+        WordSolver = string.IsNullOrWhiteSpace(Start.FirstChar) || Start.FirstChar.Length > 1
+        ? new WordleSolver(Start.WordLength)
+        : new WordleSolver(Start.WordLength, Start.FirstChar[0]);
+
+        var wordleEntities = WordSolver.RetrieveRecommendedWords().ToList();
+        possibleWords = wordleEntities.AsQueryable();
+    }
+
+    private void SubmitStep()
+    {
+        WordSolver.ApplyWordPattern(Step.Word, Step.Pattern);
+        var wordleEntities = WordSolver.RetrieveRecommendedWords().ToList();
+        possibleWords = wordleEntities.AsQueryable();
+    }
+}
