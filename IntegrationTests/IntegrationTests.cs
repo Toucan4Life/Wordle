@@ -19,8 +19,7 @@ namespace IntegrationTests
         public void StressTests()
         {
             var _solver = new WordleSolver(7);
-            var patterns = new List<Pattern> { Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect };
-            _solver.ApplyWordPattern("feuille", patterns);
+            _solver.ApplyWordPattern("feuille", "0001000");
             var result = _solver.RetrieveRecommendedWords().OrderByDescending(t=>t.Entropy).Take(1).Single();
             Assert.IsNotNull(result);
             Assert.IsTrue(Math.Abs(result.Entropy - 8.124536) < 0.000001);
