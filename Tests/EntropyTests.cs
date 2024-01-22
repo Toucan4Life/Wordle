@@ -14,29 +14,14 @@ namespace IntegrationTests
         [TestMethod]
         public void EntropyCalculationWhenPossiblyReducedBy2()
         {
-            Entropy _solver = new();
-
-            var entropy = _solver.Calculate(new List<List<Pattern>>
-            {
-                new() {Pattern.Correct, Pattern.Correct, Pattern.Correct},
-                new() {Pattern.Correct, Pattern.Correct, Pattern.Incorrect}
-            });
+            var entropy = Entropy.CalculateEntropy(new List<float> { (float).5, (float).5 });
             Assert.AreEqual(1, entropy);
         }
 
         [TestMethod]
         public void EntropyCalculationWhenPossiblyReducedBy4()
         {
-            Entropy _solver = new();
-
-            var entropy = _solver.Calculate(new List<List<Pattern>>
-            {
-                new() {Pattern.Correct, Pattern.Correct, Pattern.Correct},
-                new() {Pattern.Correct, Pattern.Correct, Pattern.Incorrect},
-                new() {Pattern.Incorrect, Pattern.Correct, Pattern.Incorrect},
-                new() {Pattern.Incorrect, Pattern.Correct, Pattern.Misplaced},
-            });
-
+            var entropy = Entropy.CalculateEntropy(new List<float> { (float).25, (float).25, (float).25, (float).25 });
             Assert.AreEqual(2, entropy);
         }
     }

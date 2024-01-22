@@ -7,20 +7,15 @@ using System.Threading.Tasks;
 
 namespace Wordle.BLL
 {
-    public class WordSearcher
+    public class WordSearcher(IEnumerable<KeyValuePair<string, float>> wordDictionary)
     {
-        public IEnumerable<KeyValuePair<string, float>> WordDictionary { get; }
+        public IEnumerable<KeyValuePair<string, float>> WordDictionary { get; } = wordDictionary;
         private readonly Dictionary<char, int> _characterCount = new();
         private readonly Dictionary<char, int> _characterAtLeastCount = new();
         private readonly Dictionary<int, char> _charPosToMatch = new();
         private readonly List<Tuple<int, char>> _charPosToNotMatch = new();
 
         public int WordLength { get; set; }
-
-        public WordSearcher(IEnumerable<KeyValuePair<string, float>> wordDictionary)
-        {
-            WordDictionary = wordDictionary;
-        }
 
         public void SetWordLength(int length)
         {
@@ -29,8 +24,7 @@ namespace Wordle.BLL
 
         public void AddCharPosToMatch(char character, int pos)
         {
-            if (!_charPosToMatch.ContainsKey(pos))
-                _charPosToMatch.Add(pos, character);
+            _charPosToMatch.TryAdd(pos, character);
         }
         public void AddCharPosToNotMatch(char character, int pos)
         {
@@ -39,25 +33,21 @@ namespace Wordle.BLL
 
         public void AddCharacterCount(char character, int count)
         {
-            if (_characterCount.ContainsKey(character))
+            if (_characterCount.TryGetValue(character, out int value))
             {
-                _characterCount[character] = Math.Max(_characterCount[character], count);
+                _characterCount[character] = Math.Max(value, count);
             } else
             {
-                if (_characterAtLeastCount.ContainsKey(character))
-                {
-                    _characterAtLeastCount.Remove(character);
-
-                }
+                _characterAtLeastCount.Remove(character);
                 _characterCount[character] = count;
             }
         }
 
         public void AddAtLeastCharacterCount(char character, int count)
         {
-            if (_characterAtLeastCount.ContainsKey(character))
+            if (_characterAtLeastCount.TryGetValue(character, out int value))
             {
-                _characterAtLeastCount[character] = Math.Max(_characterAtLeastCount[character], count);
+                _characterAtLeastCount[character] = Math.Max(value, count);
             }
             else
             {

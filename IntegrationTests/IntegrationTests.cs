@@ -13,14 +13,21 @@ namespace IntegrationTests
     {
         #region Solver
 
-
+        [TestMethod]
+        public void StressTests2()
+        {
+            var _solver = new WordleSolver(5);
+            var result = _solver.RetrieveRecommendedWords(new List<Tuple<string, string>>())
+                .OrderByDescending(t => t.Entropy).Take(1).Single();
+            Assert.AreEqual(1,1);
+        }
 
         [TestMethod]
         public void StressTests()
         {
             var _solver = new WordleSolver(7);
-            _solver.ApplyWordPattern("feuille", "0001000");
-            var result = _solver.RetrieveRecommendedWords().OrderByDescending(t=>t.Entropy).Take(1).Single();
+            
+            var result = _solver.RetrieveRecommendedWords(new List<Tuple<string, string>>{new("feuille", "0001000") }).OrderByDescending(t=>t.Entropy).Take(1).Single();
             Assert.IsNotNull(result);
             Assert.IsTrue(Math.Abs(result.Entropy - 8.124536) < 0.000001);
             Assert.AreEqual("corsant", result.Name);
@@ -40,7 +47,7 @@ namespace IntegrationTests
             var possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv")
                 .Where(t => t.Key.Length == 7);
 
-            var result = _solver.Filter(actualWord, _solver.GetPattern(actualWord, targetWord),
+            var result = Rule.Filter(actualWord, Rule.GetPattern(actualWord, targetWord),
                 new WordSearcher(possibleSolution) { WordLength = actualWord.Length }).Search().Select(t => t.Key);
 
             Assert.IsTrue(result.Contains(targetWord));
@@ -56,7 +63,7 @@ namespace IntegrationTests
                 .Where(t => t.Key.Length == targetWord.Length).OrderBy(t=>t.Key);
 
             foreach (var result in possibleSolution.AsParallel().Select(key =>
-                         solver.Filter(key.Key, solver.GetPattern(key.Key, targetWord),
+                         Rule.Filter(key.Key, Rule.GetPattern(key.Key, targetWord),
                              new WordSearcher(possibleSolution) {WordLength = targetWord.Length}).Search().Select(t => t.Key)))
             {
                 Assert.IsTrue(result.Contains(targetWord));

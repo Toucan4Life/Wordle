@@ -28,17 +28,29 @@
     <InputText disabled="@Started" @bind-Value="Step!.Pattern" class="form-control" id="Pattern"/>
     <button disabled="@Started" class="btn btn-primary" type="submit">Submit Step</button>
 </EditForm>
-@if (possibleWords != null)
+@if (recommendedWords != null)
 {
-    <span>Words count :  @(possibleWords.Count()) </span>
-    <span>Total Entropy : @(WordSolver.CalculateUniformEntropy(possibleWords.Count())) </span>
-
     <div class="grid">
-        <QuickGrid Items="@possibleWords">
+        <QuickGrid Items="@recommendedWords">
             <PropertyColumn Property="@(p => p.Name)" Sortable="true" />
             <PropertyColumn Property="@(p => p.Frequency)" Sortable="true" />
             <PropertyColumn Property="@(p => p.Entropy)" Sortable="true" IsDefaultSortColumn="true" InitialSortDirection="SortDirection.Descending" />
         </QuickGrid>
+    </div>
+}
+@if (possibleWords != null)
+{
+    <div>
+        <span>Words count :  @(possibleWords.Count()) </span>
+        <span>Total Entropy : @(WordSolver.CalculateUniformEntropy(possibleWords.Count())) </span>
+
+        <div class="grid">
+            <QuickGrid Items="@possibleWords">
+                <PropertyColumn Property="@(p => p.Name)" Sortable="true" />
+                <PropertyColumn Property="@(p => p.Frequency)" Sortable="true" IsDefaultSortColumn="true" InitialSortDirection="SortDirection.Descending" />
+                <PropertyColumn Property="@(p => p.Entropy)" Sortable="true"  />
+            </QuickGrid>
+        </div>
     </div>
 }
 
@@ -49,11 +61,13 @@
     [SupplyParameterFromForm]
     public WordleStepParameter? Step { get; set; }
     private IQueryable<WordleEntity> possibleWords;
-
+    private IQueryable<WordleEntity> recommendedWords;
+    private List<Tuple<string, string>> triedPatterns;
     protected override void OnInitialized()
     {
         Start ??= new WordleStartParameter { WordLength = 5 };
         Step ??= new WordleStepParameter();
+        triedPatterns = new List<Tuple<string, string>>();
     }
 
     public static bool Started = true;
@@ -65,14 +79,16 @@
         ? new WordleSolver(Start.WordLength)
         : new WordleSolver(Start.WordLength, Start.FirstChar[0]);
 
-        var wordleEntities = WordSolver.RetrieveRecommendedWords().ToList();
-        possibleWords = wordleEntities.AsQueryable();
+        var wordleEntities = WordSolver.RetrieveRecommendedWords(triedPatterns).ToList();
+        recommendedWords = wordleEntities.OrderByDescending(t=>t.Entropy).Take(5).AsQueryable();
+        possibleWords = wordleEntities.Where(w=>w.IsCandidate).AsQueryable();
     }
 
     private void SubmitStep()
     {
-        WordSolver.ApplyWordPattern(Step.Word, Step.Pattern);
-        var wordleEntities = WordSolver.RetrieveRecommendedWords().ToList();
-        possibleWords = wordleEntities.AsQueryable();
+        triedPatterns.Add(new Tuple<string, string>(Step.Word, Step.Pattern));
+        var wordleEntities = WordSolver.RetrieveRecommendedWords(triedPatterns).ToList();
+        recommendedWords = wordleEntities.OrderByDescending(t => t.Entropy).Take(5).AsQueryable();
+        possibleWords = wordleEntities.Where(w => w.IsCandidate).AsQueryable();
     }
 }

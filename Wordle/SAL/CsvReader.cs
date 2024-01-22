@@ -16,7 +16,7 @@ namespace Wordle.SAL
         {
             var wordsFreq = new Dictionary<string, float>();
 
-            using var reader = new StreamReader(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/" + path);
+            using var reader = new StreamReader(path);
             //skip header
             reader.ReadLine();
 

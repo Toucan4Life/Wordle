@@ -8,7 +8,7 @@ namespace Wordle.BLL
 {
     public class Rule
     {
-        public WordSearcher Filter(string word, IEnumerable<Pattern> pattern, WordSearcher searcher)
+        public static WordSearcher Filter(string word, IEnumerable<Pattern> pattern, WordSearcher searcher)
         {
             searcher.SetWordLength(pattern.Count());
 
@@ -34,7 +34,7 @@ namespace Wordle.BLL
 
 
 
-        public List<Pattern> GetPattern(string actualWord, string targetWord)
+        public static List<Pattern> GetPattern(string actualWord, string targetWord)
         {
             var patternList = new Pattern[actualWord.Length].ToList();
 

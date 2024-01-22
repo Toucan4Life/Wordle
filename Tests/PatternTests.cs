@@ -16,7 +16,7 @@ namespace IntegrationTests
         public void StressTests()
         {
             var _solver = new Rule();
-            var result =_solver.GetPattern("usurier","usagers");
+            var result = Rule.GetPattern("usurier","usagers");
             var expected = new List<Pattern>
             {
                 Pattern.Correct, Pattern.Correct, Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect,
@@ -29,7 +29,7 @@ namespace IntegrationTests
         public void StressTests3()
         {
             var _solver = new Rule();
-            var result = _solver.GetPattern("usagers", "usurier");
+            var result = Rule.GetPattern("usagers", "usurier");
             var expected = new List<Pattern>
             {
                 Pattern.Correct, Pattern.Correct, Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced,
@@ -42,7 +42,7 @@ namespace IntegrationTests
         public void StressTests4()
         {
             var _solver = new Rule();
-            var result = _solver.GetPattern("abregee", "feuille");
+            var result = Rule.GetPattern("abregee", "feuille");
             var expected = new List<Pattern>
             {
                 Pattern.Incorrect, Pattern.Incorrect, Pattern.Incorrect, Pattern.Misplaced, Pattern.Incorrect,
@@ -55,7 +55,7 @@ namespace IntegrationTests
         public void StressTests5()
         {
             var _solver = new Rule();
-            var result = _solver.GetPattern("aeriens", "feuille");
+            var result = Rule.GetPattern("aeriens", "feuille");
             var expected = new List<Pattern>
             {
                 Pattern.Incorrect, Pattern.Correct, Pattern.Incorrect, Pattern.Correct, Pattern.Misplaced,
