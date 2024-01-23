@@ -13,7 +13,6 @@ namespace Wordle
     public class WordleSolver : IWordleSolver
     {
         private WordSearcher _searcher;
-        private Entropy _entropy;
         public  WordleSolver(int wordLength, char firstchar = char.MinValue)
         {
             var wordDico = new CsvReader()
@@ -23,27 +22,22 @@ namespace Wordle
             _searcher = new WordSearcher(firstchar == char.MinValue
                 ? wordDico
                 : wordDico.Where(t => t.Key[0] == firstchar)) {WordLength = wordLength};
-            _entropy = new Entropy();
         }
 
         public IEnumerable<WordleEntity> RetrieveRecommendedWords(List<Tuple<string,string>> patterns)
         {
+            var allWords = _searcher.WordDictionary;
             patterns.ForEach(pattern=>
             {
-                Rule.Filter(pattern.Item1, pattern.Item2.Select(MapPattern), _searcher);
+                _searcher = _searcher.Filter(pattern.Item1, pattern.Item2.Select(MapPattern));
             });
 
-            var possibleWords = _searcher.Search().Select(t => t.Key).ToList();
+            var possibleWords = _searcher.Select(t => t.Key).ToList();
 
-            var dictionaryWithEntropy = _searcher.WordDictionary.AsParallel().Select(word =>
-                new WordleEntity(word.Key, word.Value, EntropyByWord(word.Key, possibleWords),false)).ToList();
-
-
-            var t = from d in dictionaryWithEntropy
-                join p in possibleWords on d.Name equals p into gj
+            return from d in allWords.AsParallel()
+                join p in possibleWords.AsParallel() on d.Key equals p into gj
                 from subpet in gj.DefaultIfEmpty()
-                select new WordleEntity(d.Name, d.Frequency, EntropyByWord(d.Name, possibleWords),subpet!=null);
-            return t;
+                select new WordleEntity(d.Key, d.Value, EntropyByWord(d.Key, possibleWords), subpet != null);
         }
 
         private float EntropyByWord(string actualWord, List<string> possibleWords)

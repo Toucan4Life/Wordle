@@ -8,29 +8,7 @@ namespace Wordle.BLL
 {
     public class Rule
     {
-        public static WordSearcher Filter(string word, IEnumerable<Pattern> pattern, WordSearcher searcher)
-        {
-            searcher.SetWordLength(pattern.Count());
 
-            foreach (var tuple in pattern.Select((pat, i) => new { character = word[i], index = i, pat }).GroupBy(t => t.character))
-            {
-                if (tuple.Any(t => t.pat == Pattern.Incorrect))
-                    searcher.AddCharacterCount(tuple.Key, tuple.Count(t => t.pat != Pattern.Incorrect));
-
-                else
-                    searcher.AddAtLeastCharacterCount(tuple.Key, tuple.Count());
-
-                foreach (var triple in tuple)
-                {
-                    if (triple.pat == Pattern.Correct)
-                        searcher.AddCharPosToMatch(triple.character, triple.index);
-                    else
-                        searcher.AddCharPosToNotMatch(triple.character, triple.index);
-                }
-            }
-
-            return searcher;
-        }
 
 
 

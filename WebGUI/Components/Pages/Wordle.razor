@@ -28,8 +28,10 @@
     <InputText disabled="@Started" @bind-Value="Step!.Pattern" class="form-control" id="Pattern"/>
     <button disabled="@Started" class="btn btn-primary" type="submit">Submit Step</button>
 </EditForm>
+
 @if (recommendedWords != null)
 {
+    <h3>Recommended next word</h3>
     <div class="grid">
         <QuickGrid Items="@recommendedWords">
             <PropertyColumn Property="@(p => p.Name)" Sortable="true" />
@@ -40,6 +42,7 @@
 }
 @if (possibleWords != null)
 {
+    <h3>Possible words</h3>
     <div>
         <span>Words count :  @(possibleWords.Count()) </span>
         <span>Total Entropy : @(WordSolver.CalculateUniformEntropy(possibleWords.Count())) </span>

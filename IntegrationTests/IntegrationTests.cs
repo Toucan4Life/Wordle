@@ -43,12 +43,13 @@ namespace IntegrationTests
             var targetWord = "feuille";
             var actualWord = "abaisse";
 
-            var _solver = new Rule();
             var possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv")
                 .Where(t => t.Key.Length == 7);
 
-            var result = Rule.Filter(actualWord, Rule.GetPattern(actualWord, targetWord),
-                new WordSearcher(possibleSolution) { WordLength = actualWord.Length }).Search().Select(t => t.Key);
+            var wordSearcher = new WordSearcher(possibleSolution) { WordLength = actualWord.Length };
+            wordSearcher.Filter(actualWord, Rule.GetPattern(actualWord, targetWord));
+
+            var result = wordSearcher.WordDictionary.Select(t => t.Key);
 
             Assert.IsTrue(result.Contains(targetWord));
         }
@@ -58,21 +59,22 @@ namespace IntegrationTests
         {
             const string targetWord = "feuille";
 
-            var solver = new Rule();
             var possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv")
                 .Where(t => t.Key.Length == targetWord.Length).OrderBy(t=>t.Key);
 
-            foreach (var result in possibleSolution.AsParallel().Select(key =>
-                         Rule.Filter(key.Key, Rule.GetPattern(key.Key, targetWord),
-                             new WordSearcher(possibleSolution) {WordLength = targetWord.Length}).Search().Select(t => t.Key)))
+            var parallelQuery = possibleSolution.AsParallel().Select(key =>
+            {
+                var searcher = new WordSearcher(possibleSolution) { WordLength = targetWord.Length };
+                searcher.Filter(key.Key, Rule.GetPattern(key.Key, targetWord));
+                return searcher.WordDictionary.Select(t => t.Key);
+            });
+
+            foreach (var result in parallelQuery)
             {
                 Assert.IsTrue(result.Contains(targetWord));
             }
         }
 
         #endregion
-
-
-
     }
 }
