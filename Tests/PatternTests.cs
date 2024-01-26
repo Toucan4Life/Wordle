@@ -15,7 +15,6 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests()
         {
-            var _solver = new Rule();
             var result = Rule.GetPattern("usurier","usagers");
             var expected = new List<Pattern>
             {
@@ -28,7 +27,6 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests3()
         {
-            var _solver = new Rule();
             var result = Rule.GetPattern("usagers", "usurier");
             var expected = new List<Pattern>
             {
@@ -41,7 +39,6 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests4()
         {
-            var _solver = new Rule();
             var result = Rule.GetPattern("abregee", "feuille");
             var expected = new List<Pattern>
             {
@@ -54,7 +51,6 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests5()
         {
-            var _solver = new Rule();
             var result = Rule.GetPattern("aeriens", "feuille");
             var expected = new List<Pattern>
             {

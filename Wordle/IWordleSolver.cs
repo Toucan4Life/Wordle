@@ -10,7 +10,7 @@ namespace Wordle
     public interface IWordleSolver
     {
         public IEnumerable<WordleEntity> RetrieveRecommendedWords(List<Tuple<string, string>> patterns);
-        public float CalculateUniformEntropy(int count);
+        public double CalculateUniformEntropy(int count);
 
     }
 }

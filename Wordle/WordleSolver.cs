@@ -12,56 +12,67 @@ namespace Wordle
 {
     public class WordleSolver : IWordleSolver
     {
-        private WordSearcher _searcher;
-        public  WordleSolver(int wordLength, char firstchar = char.MinValue)
-        {
-            var wordDico = new CsvReader()
-                .GetAllWords(System.AppDomain.CurrentDomain.BaseDirectory + "/SAL/Lexique381.csv")
-                .Where(t => t.Key.Length == wordLength);
+        private List<KeyValuePair<string, float>> _wordDictionary;
+        private List<KeyValuePair<string, float>> _allWords;
 
-            _searcher = new WordSearcher(firstchar == char.MinValue
-                ? wordDico
-                : wordDico.Where(t => t.Key[0] == firstchar)) {WordLength = wordLength};
+        public WordleSolver(WordleStartParameter? startParam = null)
+        {
+            _wordDictionary = new CsvReader()
+                .GetAllWords(System.AppDomain.CurrentDomain.BaseDirectory + "/SAL/Lexique381.csv").ToList();
+            if (startParam != null)
+            {
+                _wordDictionary = !string.IsNullOrWhiteSpace(startParam.FirstChar)
+                    ? _wordDictionary.Where(w => w.Key[0] == startParam.FirstChar[0]).ToList()
+                    : _wordDictionary;
+
+                _wordDictionary = startParam.WordLength != 0
+                    ? _wordDictionary.Where(w => w.Key.Length == startParam.WordLength).ToList()
+                    : _wordDictionary;
+            }
+            _allWords=_wordDictionary;
         }
 
         public IEnumerable<WordleEntity> RetrieveRecommendedWords(List<Tuple<string,string>> patterns)
         {
-            var allWords = _searcher.WordDictionary;
-            patterns.ForEach(pattern=>
-            {
-                _searcher = _searcher.Filter(pattern.Item1, pattern.Item2.Select(MapPattern));
-            });
-
-            var possibleWords = _searcher.Select(t => t.Key).ToList();
-
-            return from d in allWords.AsParallel()
-                join p in possibleWords.AsParallel() on d.Key equals p into gj
+            _wordDictionary = _wordDictionary
+                .Where(word => patterns.Select(wp => new Rule(wp.Item1, wp.Item2.Select(MapPattern)))
+                    .All(rule => rule.IsWordConform(word.Key))).ToList();
+            var possibleWord = _wordDictionary.Select(t => t.Key).ToList();
+            return from d in _allWords.AsParallel()
+                join p in possibleWord.AsParallel() on d.Key equals p into gj
                 from subpet in gj.DefaultIfEmpty()
-                select new WordleEntity(d.Key, d.Value, EntropyByWord(d.Key, possibleWords), subpet != null);
+                select new WordleEntity(d.Key, d.Value, EntropyByWord(d.Key, possibleWord), subpet != null);
         }
 
-        private float EntropyByWord(string actualWord, List<string> possibleWords)
+        private static double EntropyByWord(string actualWord, IEnumerable<string> possibleWords)
         {
             var patterns = possibleWords.AsParallel().Select(word => Rule.GetPattern(actualWord, word)).ToList();
-            var probabilities = patterns
+            return patterns
                 .GroupBy(t => t, new ListEqualityComparer<Pattern>())
-                .Select(t => (float)t.Count() / patterns.Count);
-            return Entropy.CalculateEntropy(probabilities);
+                .Select(t =>
+                {
+                    var proba = (float)t.Count() / patterns.Count;
+                    return proba * Math.Log2(1 / proba);
+                }).Sum();
         }
 
-        public float CalculateUniformEntropy(int count)
+        public double CalculateUniformEntropy(int count)
         {
-            return Entropy.CalculateEntropy(Enumerable.Range(0, count).Select(_ => (float)1 / count));
+            return Enumerable.Range(0, count).Select(_ =>
+            {
+                var proba = (float)1 / count;
+                return proba * Math.Log2(1 / proba);
+            }).Sum();
         }
 
-        private static Pattern MapPattern(char c)
+        private static Pattern MapPattern(char pattern)
         {
-            return c switch
+            return pattern switch
             {
                 '0' => Pattern.Incorrect,
                 '1' => Pattern.Misplaced,
                 '2' => Pattern.Correct,
-                _ => throw new ArgumentOutOfRangeException("Pattern not supported")
+                _ => throw new ArgumentOutOfRangeException(nameof(pattern))
             };
         }
     }
@@ -73,7 +84,7 @@ namespace Wordle
         public int WordLength { get; set; }
 
         [StringLength(1, ErrorMessage = "Input is too long.")]
-        public string? FirstChar { get; set; }
+        public string FirstChar { get; set; }
     }
 
     public class WordleStepParameter
@@ -85,6 +96,6 @@ namespace Wordle
         public string? Pattern { get; set; }
     }
 
-    public record WordleEntity(string Name, float Frequency, float Entropy, bool IsCandidate);
+    public record WordleEntity(string Name, double Frequency, double Entropy, bool IsCandidate);
 
 }

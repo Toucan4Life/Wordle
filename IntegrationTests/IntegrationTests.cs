@@ -16,16 +16,17 @@ namespace IntegrationTests
         [TestMethod]
         public void StressTests2()
         {
-            var _solver = new WordleSolver(5);
+            var _solver = new WordleSolver(new WordleStartParameter { WordLength = 5, FirstChar = "t" });
             var result = _solver.RetrieveRecommendedWords(new List<Tuple<string, string>>())
                 .OrderByDescending(t => t.Entropy).Take(1).Single();
-            Assert.AreEqual(1,1);
+            Assert.AreEqual(result.Name,"tarie");
+            Assert.AreEqual(result.Entropy, 5.190980369389831);
         }
 
         [TestMethod]
         public void StressTests()
         {
-            var _solver = new WordleSolver(7);
+            var _solver = new WordleSolver(new WordleStartParameter{WordLength = 7});
             
             var result = _solver.RetrieveRecommendedWords(new List<Tuple<string, string>>{new("feuille", "0001000") }).OrderByDescending(t=>t.Entropy).Take(1).Single();
             Assert.IsNotNull(result);
@@ -46,10 +47,11 @@ namespace IntegrationTests
             var possibleSolution = new CsvReader().GetAllWords("SAL/Lexique381.csv")
                 .Where(t => t.Key.Length == 7);
 
-            var wordSearcher = new WordSearcher(possibleSolution) { WordLength = actualWord.Length };
-            wordSearcher.Filter(actualWord, Rule.GetPattern(actualWord, targetWord));
-
-            var result = wordSearcher.WordDictionary.Select(t => t.Key);
+            var patternsList = new List<KeyValuePair<string, List<Pattern>>>
+                { new(actualWord, Rule.GetPattern(actualWord, targetWord)) };
+            var result = possibleSolution.Where(word =>
+                    patternsList.Select(wp => new Rule(wp.Key, wp.Value)).All(rule => rule.IsWordConform(word.Key)))
+                .Select(w => w.Key).ToList();
 
             Assert.IsTrue(result.Contains(targetWord));
         }
@@ -64,9 +66,11 @@ namespace IntegrationTests
 
             var parallelQuery = possibleSolution.AsParallel().Select(key =>
             {
-                var searcher = new WordSearcher(possibleSolution) { WordLength = targetWord.Length };
-                searcher.Filter(key.Key, Rule.GetPattern(key.Key, targetWord));
-                return searcher.WordDictionary.Select(t => t.Key);
+                var patternsList = new List<KeyValuePair<string, List<Pattern>>>
+                    { new(key.Key, Rule.GetPattern(key.Key, targetWord)) };
+                return possibleSolution.Where(word =>
+                        patternsList.Select(wp => new Rule(wp.Key, wp.Value)).All(rule => rule.IsWordConform(word.Key)))
+                    .Select(w => w.Key).ToList();
             });
 
             foreach (var result in parallelQuery)
