@@ -47,22 +47,22 @@ namespace Wordle
         private static double EntropyByWord(string actualWord, IEnumerable<string> possibleWords)
         {
             var patterns = possibleWords.AsParallel().Select(word => Rule.GetPattern(actualWord, word)).ToList();
-            return patterns
+            var probabilities = patterns
                 .GroupBy(t => t, new ListEqualityComparer<Pattern>())
-                .Select(t =>
-                {
-                    var proba = (float)t.Count() / patterns.Count;
-                    return proba * Math.Log2(1 / proba);
-                }).Sum();
+                .Select(t => (float)t.Count() / patterns.Count);
+            return GetEntropy(probabilities);
+
         }
 
         public double CalculateUniformEntropy(int count)
         {
-            return Enumerable.Range(0, count).Select(_ =>
-            {
-                var proba = (float)1 / count;
-                return proba * Math.Log2(1 / proba);
-            }).Sum();
+            var probabilities = Enumerable.Range(0, count).Select(_ => (float)1 / count);
+            return GetEntropy(probabilities);
+        }
+
+        public static double GetEntropy(IEnumerable<float> probabilities)
+        {
+            return probabilities.Select(probability => probability * Math.Log2(1 / probability)).Sum();
         }
 
         private static Pattern MapPattern(char pattern)
