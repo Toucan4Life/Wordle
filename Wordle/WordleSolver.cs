@@ -13,23 +13,16 @@ namespace Wordle
     public class WordleSolver : IWordleSolver
     {
         private List<KeyValuePair<string, float>> _wordDictionary;
-        private List<KeyValuePair<string, float>> _allWords;
+        private readonly List<KeyValuePair<string, float>> _allWords;
 
-        public WordleSolver(WordleStartParameter? startParam = null)
+        public WordleSolver(WordleStartParameter startParam)
         {
             _wordDictionary = new CsvReader()
-                .GetAllWords(System.AppDomain.CurrentDomain.BaseDirectory + "/SAL/Lexique381.csv").ToList();
-            if (startParam != null)
-            {
-                _wordDictionary = !string.IsNullOrWhiteSpace(startParam.FirstChar)
-                    ? _wordDictionary.Where(w => w.Key[0] == startParam.FirstChar[0]).ToList()
-                    : _wordDictionary;
-
-                _wordDictionary = startParam.WordLength != 0
-                    ? _wordDictionary.Where(w => w.Key.Length == startParam.WordLength).ToList()
-                    : _wordDictionary;
-            }
-            _allWords=_wordDictionary;
+                .GetAllWords(System.AppDomain.CurrentDomain.BaseDirectory + "/SAL/Lexique381.csv")
+                .Where(w => w.Key.Length == startParam.WordLength
+                            && (string.IsNullOrWhiteSpace(startParam.FirstChar) || w.Key[0] == startParam.FirstChar[0])).ToList();
+            
+            _allWords =_wordDictionary;
         }
 
         public IEnumerable<WordleEntity> RetrieveRecommendedWords(List<Tuple<string,string>> patterns)
