@@ -44,7 +44,6 @@ namespace Wordle
                 .GroupBy(t => t, new ListEqualityComparer<Pattern>())
                 .Select(t => (float)t.Count() / patterns.Count);
             return GetEntropy(probabilities);
-
         }
 
         public double CalculateUniformEntropy(int count)

@@ -108,6 +108,28 @@
 
             return patternList.ToList();
         }
+        
+        //public static List<Pattern> GetPattern(string actualWord, string targetWord)
+        //{
+        //   var correctIndex =  actualWord.ToCharArray().Select((c, i) => new { charac = c, index = i })
+        //        .Where(t => t.charac == targetWord[t.index]).Select(t => t.index);
+
+        //   var incorrectIndex = (from ttuple in actualWord.Select((charac, i) => new { character = charac, index = i })
+        //           .Where(t => !correctIndex.Contains(t.index)).GroupBy(t => t.character)
+        //       join s in targetWord.ToCharArray().Select((c, i) => new { charac = c, index = i })
+        //           .Where(t => !correctIndex.Contains(t.index)).Select(t => t.charac) on ttuple.Key equals s into gj
+        //       select ttuple.TakeLast(ttuple.Count() - gj.Count()).Select(t => t.index)).SelectMany(t => t);
+
+        //   return Enumerable.Range(0, actualWord.Length).Select(index =>
+        //   {
+        //       if (correctIndex.Contains(index)){
+        //           return Pattern.Correct;
+        //       }
+        //       if (incorrectIndex.Contains(index)) {  return Pattern.Incorrect; }
+
+        //       return Pattern.Misplaced;
+        //   }).ToList();
+        //}
 
         private bool IsAllowedPattern(string word, IEnumerable<Pattern> pattern)
         {

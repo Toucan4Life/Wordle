@@ -36,7 +36,7 @@ namespace Wordle.SAL
 
             if (transliterate.Any(t => !char.IsLetter(t))) return;
 
-            if (wordsFreq.ContainsKey(transliterate)) wordsFreq[transliterate] = AddFrequency(wordsFreq[transliterate], values[1]);
+            if (wordsFreq.TryGetValue(transliterate, out var value)) wordsFreq[transliterate] = AddFrequency(value, values[1]);
 
             else
                 wordsFreq.Add(transliterate, float.Parse(values[1], CultureInfo.InvariantCulture));
